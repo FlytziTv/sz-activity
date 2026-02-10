@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import {
-  Bookmark,
   LayoutDashboard,
   Map,
   TrendingUp,
   UserRound,
   LucideIcon,
+  Pickaxe,
 } from "lucide-react";
 
 const size_icons = 20;
@@ -17,14 +17,14 @@ const size_icons = 20;
 export default function HeaderPhone() {
   const navLinks = [
     { url: "/sz-app/dash", text: "Accueil", icon: LayoutDashboard },
-    { url: "/sz-app/save", text: "Saved", icon: Bookmark },
-    { url: "/sz-app/map", text: "Map", icon: Map },
     { url: "/sz-app/activity", text: "Activity", icon: TrendingUp },
+    { url: "/sz-app/map", text: "Map", icon: Map },
+    { url: "/sz-app/items", text: "Stuff", icon: Pickaxe },
     { url: "/sz-app/profile", text: "Profile", icon: UserRound },
   ];
 
   return (
-    <nav className="absolute bottom-0 right-0 left-0 flex flex-row items-center justify-around py-4">
+    <nav className="fixed bottom-0 right-0 left-0 z-10 flex flex-row items-center justify-around py-4 bg-black">
       {navLinks.map((link) => (
         <ButtonNav
           key={link.url}
