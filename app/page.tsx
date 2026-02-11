@@ -1,10 +1,32 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans bg-black">
-      <main className="flex min-h-screen w-full flex-col items-center p-4">
-        <a href="/sz-app/dash">
-          <button>Dashboard</button>
-        </a>
+    <div className="flex min-h-screen items-center justify-center font-sans bg-[url('/bg-esc.png')] bg-cover bg-center">
+      <main className="flex min-h-screen w-full flex-col items-center justify-end px-4 py-8 relative">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold text-white text-center">
+            Bienvenue sur ESC Life
+          </h1>
+          <p className="text-[#989898] text-center font-medium text-base">
+            Prêt à vous échapper de votre routine ? Répondez à un court
+            questionnaire pour créer votre profil.
+          </p>
+          <div className="flex flex-col gap-2 items-center justify-center w-full">
+            <Link
+              href="/sz-app/dash"
+              className="bg-white w-full text-center py-3 text-black font-bold text-lg rounded-xl"
+            >
+              Commencer
+            </Link>
+            <p className="text-[#B3B3B3] text-sm ">
+              Vous avez déjà un compte ?{" "}
+              <a href="/sz-app/quiz" className="underline">
+                Se connecter
+              </a>
+            </p>
+          </div>
+        </div>
       </main>
     </div>
   );

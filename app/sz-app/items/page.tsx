@@ -37,36 +37,34 @@ const fakeItems = [
 
 export default function Items() {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans bg-black">
-      <main className="flex min-h-screen w-full flex-col items-center p-4">
-        <HeaderPhone />
-        <div className="grid grid-cols-2 gap-4 w-full">
-          {fakeItems.map((item, index) => (
-            <Link
-              href={item.url}
-              target="_blank"
-              key={index}
-              className="flex flex-col gap-2 w-full bg-[#060606] p-2 border-3 border-[#121212] hover:border-white rounded-2xl relative transition-colors cursor-pointer duration-400"
-            >
-              <div className="relative aspect-square rounded-lg w-full">
-                <Image
-                  src={item.img}
-                  alt={item.name}
-                  fill
-                  className="rounded-lg object-cover"
-                />
-              </div>
-              <div className="flex flex-col gap-0">
-                <h1 className="text-lg font-bold">{item.name}</h1>
-                <h3 className="text-sm font-normal text-white/60">
-                  {item.marque}
-                </h3>
-                <p className="text-sm font-light text-white/40">{item.type}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </main>
+    <div className="flex w-full flex-col p-4 items-center justify-center font-sans ">
+      <HeaderPhone />
+      <div className="grid grid-cols-2 sm:grid-cols-8 gap-2 w-full">
+        {fakeItems.map((item, index) => (
+          <Link
+            href={item.url}
+            target="_blank"
+            key={index}
+            className="flex flex-col gap-2 w-full bg-[#060606] p-2 border-2 border-[#121212] hover:border-white rounded-2xl relative transition-colors cursor-pointer duration-400"
+          >
+            <div className="relative aspect-square rounded-lg w-full">
+              <Image
+                src={item.img}
+                alt={item.name}
+                fill
+                className="rounded-lg object-cover"
+              />
+            </div>
+            <div className="flex flex-col gap-0">
+              <h1 className="text-sm font-bold">{item.name}</h1>
+              <h3 className="text-sm font-normal text-white/60">
+                {item.marque}
+              </h3>
+              <p className="text-sm font-light text-white/40">{item.type}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
