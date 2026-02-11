@@ -2,12 +2,12 @@
 
 import Header from "@/components/sz/header";
 
-export default function Dash() {
+export default function Lists() {
   return (
     <>
       <Header />
       <main className="pt-14.5 px-1">
-        {/* <div className="grid grid-cols-10 gap-2"></div> */}
+        <h1 className="text-black">test</h1>
       </main>
     </>
   );

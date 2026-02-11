@@ -22,6 +22,18 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.generationvoyage.fr",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "mapetiterando.fr",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };

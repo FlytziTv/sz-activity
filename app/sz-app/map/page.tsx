@@ -1,11 +1,14 @@
-import HeaderPhone from "@/components/sz/headerPhone";
+"use client";
+
+import Header from "@/components/sz/header";
 
 export default function Map() {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans bg-black">
-      <main className="flex min-h-screen w-full flex-col items-center px-12 py-4">
-        <HeaderPhone />
+    <>
+      <Header />
+      <main className="pt-14.5 px-1">
+        <h1 className="text-black">test</h1>
       </main>
-    </div>
+    </>
   );
 }
