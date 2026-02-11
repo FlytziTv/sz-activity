@@ -9,7 +9,7 @@ export default function Profile() {
   return (
     <main className="flex w-full flex-col p-4 items-center justify-center font-sans">
       <HeaderPhone />
-      <div className="w-full flex flex-col items-center gap-4">
+      <div className="w-full flex flex-col items-center gap-2">
         <div className="w-full aspect-16/6 rounded-lg relative ">
           <div className="flex flex-col items-center justify-center absolute inset-0 z-10">
             <h1 className="text-4xl font-bold uppercase">{username}</h1>
@@ -24,7 +24,7 @@ export default function Profile() {
             className="object-cover rounded-lg object-center opacity-75"
           />
         </div>
-        <div className="w-full grid grid-cols-2 gap-4 h-20">
+        <div className="w-full grid grid-cols-2 gap-2 h-20">
           <div className="bg-[#141414] w-full h-full rounded-lg px-2 py-1"></div>
           <div className="bg-[#141414] w-full h-full rounded-lg px-2 py-1"></div>
         </div>
