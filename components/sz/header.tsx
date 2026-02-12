@@ -14,7 +14,7 @@ const navItems = [
 
 export default function Header() {
   return (
-    <div className="fixed top-0 right-0 left-0 p-1 ">
+    <div className="fixed top-0 right-0 left-0 p-2">
       <header className="w-full p-2 grid grid-cols-3 bg-[#090909] border rounded-xl">
         <div className="flex items-center justify-start">
           <SZLogo size={32} color="#FFFFFF" />
