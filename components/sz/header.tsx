@@ -48,7 +48,7 @@ export default function Header() {
 
 export function ButtonNav({ text, url }: { text: string; url: string }) {
   const pathname = usePathname();
-  const isActive = pathname === url;
+  const isActive = pathname.startsWith(url);
 
   return (
     <Link

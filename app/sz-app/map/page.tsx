@@ -1,14 +1,12 @@
 "use client";
 
-import Header from "@/components/sz/header";
+import dynamic from "next/dynamic";
 
-export default function Map() {
-  return (
-    <>
-      <Header />
-      <main className="pt-14.5 px-1">
-        <h1 className="text-black">test</h1>
-      </main>
-    </>
-  );
+// Import dynamique sans SSR
+const MapComponent = dynamic(() => import("@/components/map/MapComponent"), {
+  ssr: false,
+});
+
+export default function Page() {
+  return <MapComponent />;
 }

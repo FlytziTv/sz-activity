@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Activity } from "@/data/activities";
+import { Heart } from "lucide-react";
 
 export default function ActivityCard({ activity }: { activity: Activity }) {
   return (
@@ -11,6 +12,10 @@ export default function ActivityCard({ activity }: { activity: Activity }) {
           fill
           className="object-cover rounded-lg "
         />
+
+        <button className="absolute top-2 right-2 flex items-center justify-center text-white bg-black/40 h-7 w-7 rounded-2xl">
+          <Heart size={16} />
+        </button>
       </div>
       <div className="bg-[#FFFFFF] border border-[#D2D2D2] rounded-lg p-2 w-full flex flex-col items-center gap-2">
         <div className="flex flex-col items-center justify-center gap-0">

@@ -1,5 +1,6 @@
 import {
   Footprints,
+  Heart,
   Hourglass,
   LucideIcon,
   Navigation,
@@ -36,7 +37,7 @@ export const lists: List[] = [
   },
   {
     id: 2,
-    color: "red",
+    color: "orange",
     name: "A faire",
     icon: Hourglass,
     type: "Privé",
@@ -52,10 +53,18 @@ export const lists: List[] = [
   },
   {
     id: 4,
-    color: "red",
+    color: "purple",
     name: "Position",
     icon: Navigation,
     type: "Privé",
     elements: 38,
+  },
+  {
+    id: 5,
+    color: "red",
+    name: "Favoris",
+    icon: Heart,
+    type: "Privé",
+    elements: 18,
   },
 ];
