@@ -3,12 +3,12 @@ import { List } from "@/data/lists";
 import KeyValue from "../sz/KeyValue";
 
 const colorVariants = {
-  red: "bg-red-500/40 border-red-500/30 text-black",
-  blue: "bg-blue-500/40 border-blue-500/30 text-black",
-  green: "bg-green-500/40 border-green-500/30 text-black",
-  yellow: "bg-yellow-500/40 border-yellow-500/30 text-black",
-  purple: "bg-purple-500/40 border-purple-500/30 text-black",
-  orange: "bg-orange-500/40 border-orange-500/30 text-black",
+  red: "bg-red-500/40 border-red-500/30 text-black/60",
+  blue: "bg-blue-500/40 border-blue-500/30 text-black/60",
+  green: "bg-green-500/40 border-green-500/30 text-black/60",
+  yellow: "bg-yellow-500/40 border-yellow-500/30 text-black/60",
+  purple: "bg-purple-500/40 border-purple-500/30 text-black/60",
+  orange: "bg-orange-500/40 border-orange-500/30 text-black/60",
 } as const;
 
 export default function ListsCard({ lists }: { lists: List }) {
