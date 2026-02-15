@@ -7,7 +7,7 @@ export default function ActivityCard({ activity }: { activity: Activity }) {
     <div className="bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-col gap-2">
       <div className="relative w-full aspect-video rounded-2xl ">
         <Image
-          src={activity.image}
+          src={activity.banner}
           alt={`${activity.name}, ${activity.loc}`}
           fill
           className="object-cover rounded-lg "
