@@ -8,7 +8,7 @@ const sleepData = [
 
 export default function Sleeps() {
   return (
-    <div className="p-4 bg-[#171717] w-full rounded-xl col-span-2 flex flex-col gap-4">
+    <div className="p-4 bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl w-full col-span-2 flex flex-col gap-4 ">
       <h2 className="text-base font-medium">Comment avez-vous dormi ?</h2>
       <div className="flex flex-row items-center justify-between w-full">
         {sleepData.map((data) => (
