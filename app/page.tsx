@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 import { GithubIcon } from "@/components/icons/GithubIcon";
 import { GoogleIcon } from "@/components/icons/GoogleIcon";
@@ -10,6 +12,45 @@ const etapes = [
 ];
 
 export default function HomePage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false); // État pour le chargement
+
+  const handleSignUp = async () => {
+    // Validation basique
+    if (!email || !password || !firstName) {
+      console.error("Erreur de validation: Champs manquants");
+      alert("Veuillez remplir tous les champs obligatoires.");
+      return;
+    }
+
+    setLoading(true);
+    console.log("Tentative d'inscription pour:", email);
+
+    const { data, error } = await authClient.signUp.email({
+      email,
+      password,
+      name: `${firstName} ${lastName}`.trim(),
+      callbackURL: "/sz-app/dash",
+    });
+
+    if (error) {
+      // Log détaillé de l'erreur côté client
+      console.error("Erreur lors de l'inscription Better Auth:", {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+      });
+      alert(`Erreur: ${error.message}`);
+      setLoading(false);
+    } else {
+      console.log("Succès ! Utilisateur créé et connecté:", data);
+      // La redirection vers callbackURL est gérée par Better Auth
+    }
+  };
+
   return (
     <main className="p-4 grid grid-cols-2 gap-4 h-screen">
       <div className="bg-[url('/bg-esc-carre.png')] bg-cover bg-center bg-no-repeat grid grid-rows-2 relative rounded-4xl gap-4 p-4">
@@ -35,24 +76,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      {/* <div className="bg-[#FFFFFF] flex flex-col relative rounded-4xl p-4 justify-between">
-        <header className="flex flex-row items-center justify-center gap-2">
-          <div className="h-1.5 w-10 rounded-full bg-[#000000]" />
-          <div className="h-1.5 w-10 rounded-full bg-[#E8E8E8]" />
-          <div className="h-1.5 w-10 rounded-full bg-[#E8E8E8]" />
-          <div className="h-1.5 w-10 rounded-full bg-[#E8E8E8]" />
-          <div className="h-1.5 w-10 rounded-full bg-[#E8E8E8]" />
-        </header>
-
-        <footer className="flex flex-row items-center justify-center gap-2 w-full">
-          <button className="text-center w-full p-2 bg-[#F6F6F6] hover:bg-transparent text-[#000000] font-medium rounded-2xl transition-colors duration-300 cursor-pointer">
-            Étapes précédente
-          </button>
-          <button className="text-center w-full p-2 bg-[#000000] hover:bg-[#000000]/75 text-[#FFFFFF] font-medium rounded-2xl transition-colors duration-300 cursor-pointer">
-            Étapes suivante
-          </button>
-        </footer>
-      </div> */}
 
       <div className="bg-[#FFFFFF] flex relative rounded-4xl p-4 justify-center ">
         <div className="flex flex-col items-center justify-center gap-8">
@@ -64,10 +87,16 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-row gap-2 w-full">
-            <button className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300">
+            <button
+              onClick={() => console.log("Connexion Google non configurée")}
+              className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300 pointer-events-auto cursor-pointer"
+            >
               <GoogleIcon size={16} /> Google
             </button>
-            <button className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300">
+            <button
+              onClick={() => console.log("Connexion Github non configurée")}
+              className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300 pointer-events-auto cursor-pointer"
+            >
               <GithubIcon size={16} />
               Github
             </button>
@@ -79,19 +108,27 @@ export default function HomePage() {
             <div className="h-0.5 w-full bg-linear-65 from-[#9B9B9B] to-transparent rounded-full" />
           </div>
 
-          <form action="" className="flex flex-col gap-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSignUp();
+            }}
+            className="flex flex-col gap-4"
+          >
             <div className="flex flex-row gap-4">
               <FormGroup
                 name="firstName"
                 label="Prénom"
                 type="text"
                 placeholder="Entrez votre prénom"
+                onChange={(e) => setFirstName(e.target.value)}
               />
               <FormGroup
                 name="lastName"
                 label="Nom"
                 type="text"
                 placeholder="Entrez votre nom"
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
 
@@ -100,6 +137,7 @@ export default function HomePage() {
               label="Email"
               type="email"
               placeholder="Entrez votre email"
+              onChange={(e) => setEmail(e.target.value)}
             />
 
             <FormGroup
@@ -107,30 +145,37 @@ export default function HomePage() {
               label="Mot de passe"
               type="password"
               placeholder="Entrez votre mot de passe"
+              onChange={(e) => setPassword(e.target.value)}
             />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2 mt-4 bg-[#000000] hover:bg-[#000000]/75 text-[#FFFFFF] font-medium rounded-lg transition-colors duration-300 cursor-pointer ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {loading ? "Création en cours..." : "Créer un compte"}
+            </button>
           </form>
-          <button
-            type="submit"
-            className="w-full py-2 bg-[#000000] hover:bg-[#000000]/75 text-[#FFFFFF] font-medium rounded-lg transition-colors duration-300 cursor-pointer"
-          >
-            Créer un compte
-          </button>
         </div>
       </div>
     </main>
   );
 }
 
+// ... Ton FormGroup reste identique
+
 export function FormGroup({
   name,
   label,
   type,
   placeholder,
+  onChange,
 }: {
   name: string;
   label: string;
   type: string;
   placeholder: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -142,6 +187,7 @@ export function FormGroup({
         placeholder={placeholder}
         name={name}
         id={name}
+        onChange={onChange}
         className="py-2 px-3 bg-[#F7F7F7] rounded-lg text-sm border border-transparent focus:outline-none focus:ring-2 focus:ring-[#000000]/50 transition-colors duration-300"
       />
     </div>
