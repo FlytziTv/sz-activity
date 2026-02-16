@@ -18,6 +18,25 @@ export default function HomePage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false); // État pour le chargement
 
+  const handleSocialSignIn = async (provider: "google" | "github") => {
+    setLoading(true);
+    try {
+      const { data, error } = await authClient.signIn.social({
+        provider: provider,
+        callbackURL: "/sz-app/dash",
+      });
+
+      if (error) {
+        console.error(`Erreur connexion ${provider}:`, error);
+        alert(error.message);
+      }
+    } catch (err) {
+      console.error("Erreur fatale:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSignUp = async () => {
     // Validation basique
     if (!email || !password || !firstName) {
@@ -88,17 +107,18 @@ export default function HomePage() {
 
           <div className="flex flex-row gap-2 w-full">
             <button
-              onClick={() => console.log("Connexion Google non configurée")}
-              className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300 pointer-events-auto cursor-pointer"
+              disabled={loading}
+              onClick={() => handleSocialSignIn("google")}
+              className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300 cursor-pointer disabled:opacity-50"
             >
               <GoogleIcon size={16} /> Google
             </button>
             <button
-              onClick={() => console.log("Connexion Github non configurée")}
-              className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300 pointer-events-auto cursor-pointer"
+              disabled={loading}
+              onClick={() => handleSocialSignIn("github")}
+              className="w-full border border-[#9B9B9B] rounded-lg hover:bg-[#9B9B9B]/20 py-2 flex flex-row items-center justify-center gap-2 transition-colors duration-300 cursor-pointer disabled:opacity-50"
             >
-              <GithubIcon size={16} />
-              Github
+              <GithubIcon size={16} /> GitHub
             </button>
           </div>
 
