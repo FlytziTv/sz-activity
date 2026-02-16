@@ -55,7 +55,6 @@ const dataInfos = {
 
   // Profil technique du terrain
   Technique: [
-    { icons: Route, label: "Type", value: "Boucle" },
     {
       icons: TrendingUp,
       label: "Dénivelé positif",
@@ -85,11 +84,6 @@ const dataInfos = {
       icons: MapPinned,
       label: "Régions",
       value: "Pyrénées, Massif des Trois-Seigneurs",
-    },
-    {
-      icons: Landmark,
-      label: "Commune",
-      value: "Rabat-les-Trois-Seigneurs (09400)",
     },
   ],
 
@@ -193,11 +187,11 @@ export default function Page() {
 
         <div className="grid grid-cols-3 p-3 gap-2 w-full  border-b border-[#D2D2D2]">
           <StatsFiche label="Création" value="13 ferv. 2026" />
-          <StatsFiche label="Mise à jour" value="" />
+          <StatsFiche label="Type" value={activities[0].type} />
           <StatsFiche label="Dernier avis" value="14 févr. 2026" />
         </div>
 
-        {/* <div className="grid grid-cols-2 gap-4 p-3 w-full border-b border-[#D2D2D2] ">
+        <div className="grid grid-cols-2 gap-4 p-3 w-full ">
           {Object.entries(dataInfos).map(([category, items]) => (
             <div key={category} className="flex flex-col gap-2 rounded-lg ">
               <h3 className="text-black font-semibold">{category}</h3>
@@ -213,7 +207,7 @@ export default function Page() {
               </div>
             </div>
           ))}
-        </div> */}
+        </div>
       </div>
     </div>
   );
