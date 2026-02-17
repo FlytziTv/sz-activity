@@ -15,11 +15,11 @@ export default async function AppLayout({
 
   // Si pas de session, on redirige une seule fois pour tout le dossier
   if (!session) {
-    redirect("/login");
+    redirect("/");
   }
   return (
     <>
-      <Header />
+      <Header user={session.user} />
       <main className="pt-16.5 px-2">{children}</main>
     </>
   );

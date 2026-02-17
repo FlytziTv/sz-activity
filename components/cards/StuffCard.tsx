@@ -1,28 +1,47 @@
-import { Stuff } from "@/data/stuffs";
 import Image from "next/image";
 import KeyValue from "../sz/KeyValue";
 import Link from "next/link";
 
-export default function StuffCard({ stuff }: { stuff: Stuff }) {
+export default function StuffCard({
+  name,
+  brand,
+  type,
+  weight,
+  url,
+  image,
+}: {
+  name: string;
+  brand: string;
+  type: string;
+  weight: number;
+  url: string;
+  image: string;
+}) {
   return (
     <Link
-      href={stuff.url}
+      href={url}
       className="bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-row gap-2 "
     >
       <div className="relative aspect-square rounded-lg h-full shrink-0 min-h-35">
-        <Image
-          src={stuff.image}
-          alt={stuff.name}
-          fill
-          className="object-contain rounded-lg"
-        />
+        {image ? (
+          <Image
+            src={image}
+            alt={name}
+            fill
+            className="object-contain rounded-lg"
+          />
+        ) : (
+          <div className="bg-white border border-gray-300 w-full h-full rounded-lg flex items-center justify-center">
+            <span className="text-gray-500 text-sm">Aucune image</span>
+          </div>
+        )}
       </div>
 
       <div className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2">
-        <KeyValue label="Nom" value={stuff.name} />
-        <KeyValue label="Marque" value={stuff.brand} />
-        <KeyValue label="Type" value={stuff.type} />
-        <KeyValue label="Poids" value={stuff.weight + " g"} />
+        <KeyValue label="Nom" value={name} />
+        <KeyValue label="Marque" value={brand} />
+        <KeyValue label="Type" value={type} />
+        <KeyValue label="Poids" value={weight + " g"} />
       </div>
     </Link>
   );

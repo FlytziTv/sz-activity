@@ -13,7 +13,25 @@ const navItems = [
   { text: "Équipement", url: "/sz-app/stuff" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  user: {
+    name: string;
+    image?: string | null;
+  };
+}
+
+// Fonction pour générer les initiales à partir du nom de l'utilisateur
+const getInitials = (name: string) => {
+  const parts = name.split(" ");
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase(); // Ex: "Alexis De Jesus" -> "AD"
+  }
+  return name.slice(0, 2).toUpperCase(); // Fallback si un seul nom
+};
+
+export default function Header({ user }: HeaderProps) {
+  const initials = getInitials(user.name);
+
   return (
     <div className="fixed top-0 right-0 left-0 p-2">
       <header className="w-full p-2 grid grid-cols-3 bg-[#090909] border rounded-xl">
@@ -26,19 +44,22 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center justify-end">
-          {/* <button className="font-medium text-sm hover:text-[#F4F4F4] hover:bg-[#535353]/60 transition-colors duration-250 cursor-pointer px-4 py-1.5 rounded-sm text-[#bebebe] bg-transparent border-transparent">
-            Se connecter
-          </button> */}
           <Link
             href="/sz-app/profile"
-            className="h-full relative aspect-square"
+            className="h-8 w-8 relative flex items-center justify-center border border-[#333] rounded-full overflow-hidden hover:border-[#555] transition-colors bg-[#1a1a1a]"
           >
-            <Image
-              src="https://i.pinimg.com/736x/d4/42/9d/d4429d024e17ba90cd7da6356cc2be01.jpg"
-              alt="Profile"
-              fill
-              className="absolute object-cover rounded-full aspect-square"
-            />
+            {user.image ? (
+              <Image
+                src={user.image}
+                alt={user.name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <span className="text-[10px] font-bold text-[#bebebe]">
+                {initials}
+              </span>
+            )}
           </Link>
         </div>
       </header>
