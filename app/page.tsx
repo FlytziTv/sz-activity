@@ -36,7 +36,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* <SignUp /> */}
+      <SignUp />
       <Login />
     </main>
   );

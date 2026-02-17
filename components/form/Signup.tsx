@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { GithubIcon } from "@/components/icons/GithubIcon";
@@ -8,6 +9,8 @@ import Link from "next/link";
 import { FormGroup } from "./FormGroup";
 
 export default function SignUp() {
+  const router = useRouter();
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -52,17 +55,15 @@ export default function SignUp() {
     });
 
     if (error) {
-      // Log détaillé de l'erreur côté client
-      console.error("Erreur lors de l'inscription Better Auth:", {
-        message: error.message,
-        status: error.status,
-        code: error.code,
-      });
+      console.error("Erreur:", error);
       alert(`Erreur: ${error.message}`);
-      setLoading(false);
+      setLoading(false); // On arrête le chargement seulement s'il y a une erreur
     } else {
-      console.log("Succès ! Utilisateur créé et connecté:", data);
-      // La redirection vers callbackURL est gérée par Better Auth
+      console.log("Succès ! Redirection...");
+      // Forcer la redirection manuelle car Better Auth attend parfois
+      // une action utilisateur ou un changement d'état serveur
+      router.push("/sz-app/dash");
+      router.refresh(); // Optionnel : pour forcer le layout à détecter la nouvelle session
     }
   };
 

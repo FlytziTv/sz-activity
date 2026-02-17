@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SZLogo } from "../icons/logo";
-import Image from "next/image";
+import UserProfile from "./UserProfile";
 
 const navItems = [
   { text: "Accueil", url: "/sz-app/dash" },
@@ -16,22 +16,11 @@ const navItems = [
 interface HeaderProps {
   user: {
     name: string;
-    image?: string | null;
+    image?: string | null | undefined;
   };
 }
 
-// Fonction pour générer les initiales à partir du nom de l'utilisateur
-const getInitials = (name: string) => {
-  const parts = name.split(" ");
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase(); // Ex: "Alexis De Jesus" -> "AD"
-  }
-  return name.slice(0, 2).toUpperCase(); // Fallback si un seul nom
-};
-
 export default function Header({ user }: HeaderProps) {
-  const initials = getInitials(user.name);
-
   return (
     <div className="fixed top-0 right-0 left-0 p-2">
       <header className="w-full p-2 grid grid-cols-3 bg-[#090909] border rounded-xl">
@@ -44,23 +33,7 @@ export default function Header({ user }: HeaderProps) {
           ))}
         </nav>
         <div className="flex items-center justify-end">
-          <Link
-            href="/sz-app/profile"
-            className="h-8 w-8 relative flex items-center justify-center border border-[#333] rounded-full overflow-hidden hover:border-[#555] transition-colors bg-[#1a1a1a]"
-          >
-            {user.image ? (
-              <Image
-                src={user.image}
-                alt={user.name}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <span className="text-[10px] font-bold text-[#bebebe]">
-                {initials}
-              </span>
-            )}
-          </Link>
+          <UserProfile user={user} />
         </div>
       </header>
     </div>
