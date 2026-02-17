@@ -5,14 +5,14 @@ import Link from "next/link";
 export default function StuffCard({
   name,
   brand,
-  type,
+  category,
   weight,
   url,
   image,
 }: {
   name: string;
   brand: string;
-  type: string;
+  category: string;
   weight: number;
   url: string;
   image: string;
@@ -28,7 +28,7 @@ export default function StuffCard({
             src={image}
             alt={name}
             fill
-            className="object-contain rounded-lg"
+            className="object-contain rounded-lg bg-white"
           />
         ) : (
           <div className="bg-white border border-gray-300 w-full h-full rounded-lg flex items-center justify-center">
@@ -37,10 +37,10 @@ export default function StuffCard({
         )}
       </div>
 
-      <div className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2">
+      <div className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2 relative">
         <KeyValue label="Nom" value={name} />
         <KeyValue label="Marque" value={brand} />
-        <KeyValue label="Type" value={type} />
+        <KeyValue label="Catégorie" value={category} />
         <KeyValue label="Poids" value={weight + " g"} />
       </div>
     </Link>

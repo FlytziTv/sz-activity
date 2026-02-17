@@ -46,6 +46,7 @@ const createTables = () => {
     CREATE TABLE IF NOT EXISTS stuffs (
       id TEXT PRIMARY KEY,
       userId TEXT NOT NULL,
+      image TEXT,
       name TEXT NOT NULL,
       brand TEXT NOT NULL,
       category TEXT NOT NULL,
@@ -55,6 +56,14 @@ const createTables = () => {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
     );
+  `);
+
+  db.exec(`
+    CREATE TRIGGER IF NOT EXISTS trigger_stuff_updated_at
+    AFTER UPDATE ON stuff
+    BEGIN
+      UPDATE stuff SET updated_at = CURRENT_TIMESTAMP WHERE id = old.id;
+    END;
   `);
 
   console.log("✅ Tables et Triggers de suivi créés !");

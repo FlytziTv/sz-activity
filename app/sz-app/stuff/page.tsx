@@ -4,6 +4,16 @@ import { headers } from "next/headers";
 import StuffCard from "@/components/cards/StuffCard";
 import StuffForm from "@/components/form/stuffsForm";
 
+interface StuffItem {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  weight: number;
+  url: string;
+  image: string;
+}
+
 async function getStuff() {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -20,7 +30,7 @@ async function getStuff() {
     ORDER BY created_at DESC
   `,
     )
-    .all(session.user.id);
+    .all(session.user.id) as StuffItem[];
 
   return allStuff;
 }
@@ -31,12 +41,12 @@ export default async function Stuff() {
   return (
     <>
       <div className="grid grid-cols-4 gap-2 ">
-        {items.map((item: any) => (
+        {items.map((item: StuffItem) => (
           <StuffCard
             key={item.id}
             name={item.name}
             brand={item.brand}
-            type={item.type}
+            category={item.category}
             weight={item.weight}
             url={item.url}
             image={item.image}
@@ -45,32 +55,5 @@ export default async function Stuff() {
         <StuffForm />
       </div>
     </>
-  );
-}
-
-export function FormGroup({
-  name,
-  label,
-  type,
-  placeholder,
-}: {
-  name: string;
-  label: string;
-  type: string;
-  placeholder: string;
-}) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={name} className="font-medium text-base">
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        name={name}
-        id={name}
-        className="py-2 px-3 bg-[#F7F7F7] rounded-lg text-sm border border-transparent focus:outline-none focus:ring-2 focus:ring-[#000000]/50 transition-colors duration-300"
-      />
-    </div>
   );
 }
