@@ -3,7 +3,7 @@ import { db } from "./db";
 
 export const auth = betterAuth({
   database: {
-    db: db,
+    client: db,
     type: "libsql",
   },
   socialProviders: {
