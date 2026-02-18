@@ -12,22 +12,21 @@ export async function addStuff(formData: FormData) {
 
   if (!session) throw new Error("Tu dois être connecté");
 
-  // 2. Extraction des données (Ajout de category ici)
   const image = (formData.get("image") as string) || null;
   const name = formData.get("name") as string;
   const brand = formData.get("brand") as string;
-  const category = formData.get("category") as string; // <--- NE PAS OUBLIER
+  const category = formData.get("category") as string;
   const url = formData.get("url") as string;
   const weight = parseInt(formData.get("weight") as string) || 0;
 
-  // 3. Insertion SQL (Ajout de la colonne category)
   const id = crypto.randomUUID();
-  const statement = db.prepare(`
-    INSERT INTO stuff (id, userId, image, name, brand, category, url, weight)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `);
 
-  statement.run(id, session.user.id, image, name, brand, category, url, weight);
+  // On utilise await db.execute pour LibSQL
+  await db.execute({
+    sql: `INSERT INTO stuff (id, userId, image, name, brand, category, url, weight)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [id, session.user.id, image, name, brand, category, url, weight],
+  });
 
   revalidatePath("/sz-app/stuff");
 }
@@ -39,13 +38,10 @@ export async function deleteStuff(id: string) {
 
   if (!session) throw new Error("Non autorisé");
 
-  // On supprime l'objet UNIQUEMENT s'il appartient à l'utilisateur connecté
-  const statement = db.prepare(`
-    DELETE FROM stuff 
-    WHERE id = ? AND userId = ?
-  `);
-
-  statement.run(id, session.user.id);
+  await db.execute({
+    sql: `DELETE FROM stuff WHERE id = ? AND userId = ?`,
+    args: [id, session.user.id],
+  });
 
   revalidatePath("/sz-app/stuff");
 }
@@ -60,18 +56,14 @@ export async function updateStuff(formData: FormData) {
   const category = formData.get("category") as string;
   const url = formData.get("url") as string;
   const weight = parseInt(formData.get("weight") as string) || 0;
-
-  // 1. IL MANQUAIT ÇA : On récupère l'image (ou null si vide)
   const image = (formData.get("image") as string) || null;
 
-  db.prepare(
-    `
-    UPDATE stuff 
-    SET name = ?, brand = ?, category = ?, url = ?, weight = ?, image = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE id = ? AND userId = ?
-  `,
-    // 2. ON AJOUTE "image" dans les paramètres de .run()
-  ).run(name, brand, category, url, weight, image, id, session.user.id);
+  await db.execute({
+    sql: `UPDATE stuff 
+          SET name = ?, brand = ?, category = ?, url = ?, weight = ?, image = ?, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ? AND userId = ?`,
+    args: [name, brand, category, url, weight, image, id, session.user.id],
+  });
 
   revalidatePath("/sz-app/stuff");
 }

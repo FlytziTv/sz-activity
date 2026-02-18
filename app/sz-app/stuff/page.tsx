@@ -21,40 +21,35 @@ async function getStuff() {
 
   if (!session) return [];
 
-  // On récupère uniquement le matériel de l'utilisateur connecté
-  const allStuff = db
-    .prepare(
-      `
-    SELECT * FROM stuff 
-    WHERE userId = ? 
-    ORDER BY created_at DESC
-  `,
-    )
-    .all(session.user.id) as StuffItem[];
+  // Changement ici : .execute() au lieu de .prepare().all()
+  const result = await db.execute({
+    sql: `SELECT * FROM stuff WHERE userId = ? ORDER BY created_at DESC`,
+    args: [session.user.id],
+  });
 
-  return allStuff;
+  // Les données LibSQL sont dans result.rows
+  // On les caste en StuffItem[] pour TypeScript
+  return result.rows as unknown as StuffItem[];
 }
 
 export default async function Stuff() {
   const items = await getStuff();
 
   return (
-    <>
-      <div className="grid grid-cols-4 gap-2 ">
-        {items.map((item: StuffItem) => (
-          <StuffCard
-            key={item.id}
-            id={item.id}
-            name={item.name}
-            brand={item.brand}
-            category={item.category}
-            weight={item.weight}
-            url={item.url}
-            image={item.image}
-          />
-        ))}
-        <StuffForm />
-      </div>
-    </>
+    <div className="grid grid-cols-4 gap-2">
+      {items.map((item) => (
+        <StuffCard
+          key={item.id}
+          id={item.id}
+          name={item.name}
+          brand={item.brand}
+          category={item.category}
+          weight={item.weight}
+          url={item.url}
+          image={item.image}
+        />
+      ))}
+      <StuffForm />
+    </div>
   );
 }
