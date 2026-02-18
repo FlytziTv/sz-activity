@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import StuffCard from "@/components/cards/StuffCard";
 import StuffForm from "@/components/form/stuffsForm";
+export const dynamic = "force-dynamic";
 
 interface StuffItem {
   id: string;
