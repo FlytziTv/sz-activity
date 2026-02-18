@@ -11,14 +11,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { addStuff } from "@/actions/stuff";
 import { useState } from "react";
-import { FormGroup } from "./FormGroup";
-import ImgUpload from "./stuff/ImgUpload";
-import SelectStuff from "./stuff/SelectStuff";
+import { FormGroup } from "../FormGroup";
+import ImgUpload from "./ImgUpload";
+import SelectStuff from "./SelectStuff";
 
-export default function StuffForm() {
+export default function EditStuffForm() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -44,18 +44,13 @@ export default function StuffForm() {
           <div className="grid gap-4 py-4">
             <ImgUpload />
 
-            <FormGroup
-              name="name"
-              label="Nom"
-              type="text"
-              placeholder="Ex: Sac à dos 40L"
-            />
+            <FormGroup name="name" label="Nom" type="text" defaultValue="" />
 
             <FormGroup
               name="brand"
               label="Marque"
               type="text"
-              placeholder="Ex: Osprey"
+              defaultValue=""
             />
 
             <SelectStuff />
@@ -64,14 +59,14 @@ export default function StuffForm() {
               name="url"
               label="Lien (URL)"
               type="url"
-              placeholder="https://..."
+              defaultValue=""
             />
 
             <FormGroup
               name="weight"
               label="Poids (g)"
               type="number"
-              placeholder="Ex: 850"
+              defaultValue=""
             />
           </div>
 

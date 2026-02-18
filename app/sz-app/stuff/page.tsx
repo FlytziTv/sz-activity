@@ -44,6 +44,7 @@ export default async function Stuff() {
         {items.map((item: StuffItem) => (
           <StuffCard
             key={item.id}
+            id={item.id}
             name={item.name}
             brand={item.brand}
             category={item.category}

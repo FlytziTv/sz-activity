@@ -1,8 +1,10 @@
 import Image from "next/image";
 import KeyValue from "../sz/KeyValue";
 import Link from "next/link";
+import ActionButton from "../button/ActionButton";
 
 export default function StuffCard({
+  id,
   name,
   brand,
   category,
@@ -10,6 +12,7 @@ export default function StuffCard({
   url,
   image,
 }: {
+  id: string;
   name: string;
   brand: string;
   category: string;
@@ -18,10 +21,7 @@ export default function StuffCard({
   image: string;
 }) {
   return (
-    <Link
-      href={url}
-      className="bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-row gap-2 "
-    >
+    <div className="relative bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-row gap-2 ">
       <div className="relative aspect-square rounded-lg h-full shrink-0 min-h-35">
         {image ? (
           <Image
@@ -37,12 +37,23 @@ export default function StuffCard({
         )}
       </div>
 
-      <div className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2 relative">
-        <KeyValue label="Nom" value={name} />
-        <KeyValue label="Marque" value={brand} />
-        <KeyValue label="Catégorie" value={category} />
-        <KeyValue label="Poids" value={weight + " g"} />
+      <div className="relative group w-full">
+        <div className="absolute top-2 right-2 z-10 flex flex-row gap-1">
+          <ActionButton
+            item={{ id, name, brand, category, weight, url, image }}
+          />
+        </div>
+
+        <Link
+          href={url}
+          className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2 relative"
+        >
+          <KeyValue label="Nom" value={name} />
+          <KeyValue label="Marque" value={brand} />
+          <KeyValue label="Catégorie" value={category} />
+          <KeyValue label="Poids" value={weight + " g"} />
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }

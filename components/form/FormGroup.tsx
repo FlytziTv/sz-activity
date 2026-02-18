@@ -7,12 +7,14 @@ export function FormGroup({
   type,
   placeholder,
   onChange,
+  defaultValue,
 }: {
   name: string;
   label: string;
   type: string;
-  placeholder: string;
+  placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  defaultValue?: string | number;
 }) {
   return (
     <FieldGroup>
@@ -23,6 +25,7 @@ export function FormGroup({
         type={type}
         placeholder={placeholder}
         onChange={onChange}
+        defaultValue={defaultValue}
         required
       />
     </FieldGroup>

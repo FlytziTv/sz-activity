@@ -35,11 +35,20 @@ const categories = [
   { title: "Accessoire", value: "accessoire" },
 ];
 
-export default function SelectStuff() {
+export default function SelectStuff({
+  defaultValue,
+}: {
+  defaultValue?: string;
+}) {
   return (
     <FieldGroup>
       <FieldLabel htmlFor="category">Catégorie</FieldLabel>
-      <Select name="category" required>
+      <Select
+        name="category"
+        defaultValue={defaultValue}
+        key={defaultValue}
+        required
+      >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Choisir une catégorie" />
         </SelectTrigger>
