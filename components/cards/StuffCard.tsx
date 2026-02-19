@@ -36,16 +36,10 @@ export default function StuffCard({
           </div>
         )}
       </div>
-
-      <div className="relative group w-full">
-        <div className="absolute top-2 right-2 z-10 flex flex-row gap-1">
-          <ActionButton
-            item={{ id, name, brand, category, weight, url, image }}
-          />
-        </div>
-
+      {url ? (
         <Link
           href={url}
+          target="_blank"
           className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2 relative"
         >
           <KeyValue label="Nom" value={name} />
@@ -53,7 +47,14 @@ export default function StuffCard({
           <KeyValue label="Catégorie" value={category} />
           <KeyValue label="Poids" value={weight + " g"} />
         </Link>
-      </div>
+      ) : (
+        <div className="bg-[#DCDCDC] rounded-lg p-2 w-full flex flex-col items-start gap-2 relative">
+          <KeyValue label="Nom" value={name} />
+          <KeyValue label="Marque" value={brand} />
+          <KeyValue label="Catégorie" value={category} />
+          <KeyValue label="Poids" value={weight + " g"} />
+        </div>
+      )}
     </div>
   );
 }

@@ -102,16 +102,16 @@ export default async function MyProfilePage() {
       </div>
       <div className="flex flex-col pt-21">
         <nav className="border-b border-[#DBDBDB] w-full flex flex-row items-center justify-start gap-10 px-4">
-          <p className="font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
+          <p className="text-sm font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
             Activités
           </p>
-          <p className="font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
+          <p className="text-sm font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
             Listes
           </p>
-          <p className="font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
+          <p className="text-sm font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
             Équipement
           </p>
-          <p className="font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
+          <p className="text-sm font-medium border-b border-transparent px-2 hover:border-[#000000] cursor-pointer transition-colors duration-150">
             Stats & Récompenses
           </p>
         </nav>

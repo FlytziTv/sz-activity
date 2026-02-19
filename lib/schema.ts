@@ -74,6 +74,30 @@ export const stuff = pgTable("stuff", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const lists = pgTable("lists", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  icon: text("icon").notNull(),
+  color: text("color").notNull(),
+  visibility: text("visibility").notNull().default("private"), // private | public
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const listActivities = pgTable("list_activities", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  listId: uuid("list_id")
+    .notNull()
+    .references(() => lists.id, { onDelete: "cascade" }),
+  activityId: uuid("activity_id")
+    .notNull()
+    .references(() => activities.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // Tables randonnée
 export const activities = pgTable("activities", {
   id: uuid("id").defaultRandom().primaryKey(),

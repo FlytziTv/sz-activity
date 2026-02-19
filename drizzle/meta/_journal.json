@@ -29,6 +29,13 @@
       "when": 1771489841315,
       "tag": "0003_adorable_kid_colt",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1771514238521,
+      "tag": "0004_cheerful_prodigy",
+      "breakpoints": true
     }
   ]
 }
