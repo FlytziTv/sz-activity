@@ -50,9 +50,7 @@ export default function EditStuff({ item }: { item: StuffItem }) {
             try {
               await updateStuff(formData);
               setOpen(false);
-              toast.success("Modification sauvegardée", {
-                description: `${formData.get("name")} a été mis à jour.`,
-              });
+              toast.success("Modification sauvegardée");
             } catch (error) {
               toast.error("Erreur lors de la sauvegarde");
             }

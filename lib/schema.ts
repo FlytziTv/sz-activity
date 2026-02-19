@@ -59,6 +59,21 @@ export const verifications = pgTable("verifications", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
+export const stuff = pgTable("stuff", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  brand: text("brand").notNull(),
+  category: text("category").notNull(),
+  url: text("url"),
+  weight: integer("weight").default(0),
+  image: text("image"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // Tables randonnée
 export const activities = pgTable("activities", {
   id: uuid("id").defaultRandom().primaryKey(),

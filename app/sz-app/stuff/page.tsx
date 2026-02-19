@@ -1,36 +1,21 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { stuff } from "@/lib/schema";
 import { headers } from "next/headers";
+import { eq, desc } from "drizzle-orm";
 import StuffCard from "@/components/cards/StuffCard";
 import StuffForm from "@/components/form/stuffsForm";
 export const dynamic = "force-dynamic";
 
-interface StuffItem {
-  id: string;
-  name: string;
-  brand: string;
-  category: string;
-  weight: number;
-  url: string;
-  image: string;
-}
-
 async function getStuff() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return [];
 
-  // Changement ici : .execute() au lieu de .prepare().all()
-  const result = await db.execute({
-    sql: `SELECT * FROM stuff WHERE userId = ? ORDER BY created_at DESC`,
-    args: [session.user.id],
-  });
-
-  // Les données LibSQL sont dans result.rows
-  // On les caste en StuffItem[] pour TypeScript
-  return result.rows as unknown as StuffItem[];
+  return await db
+    .select()
+    .from(stuff)
+    .where(eq(stuff.userId, session.user.id))
+    .orderBy(desc(stuff.createdAt));
 }
 
 export default async function Stuff() {
@@ -45,9 +30,9 @@ export default async function Stuff() {
           name={item.name}
           brand={item.brand}
           category={item.category}
-          weight={item.weight}
-          url={item.url}
-          image={item.image}
+          weight={item.weight ?? 0}
+          url={item.url ?? ""}
+          image={item.image ?? ""}
         />
       ))}
       <StuffForm />
