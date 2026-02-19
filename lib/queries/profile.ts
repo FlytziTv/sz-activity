@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { users, activities, stuff } from "@/lib/schema";
+import { users, userActivities, stuff } from "@/lib/schema";
 import { eq, desc, sum, count } from "drizzle-orm";
 
 export async function getUserProfile(userId: string) {
@@ -16,13 +16,13 @@ export async function getUserProfile(userId: string) {
 export async function getUserStats(userId: string) {
   const result = await db
     .select({
-      totalActivities: count(activities.id),
-      totalDistance: sum(activities.distance),
-      totalElevation: sum(activities.elevationGain),
-      totalDuration: sum(activities.duration),
+      totalActivities: count(userActivities.id),
+      totalDistance: sum(userActivities.distance),
+      totalElevation: sum(userActivities.elevationGain),
+      totalDuration: sum(userActivities.duration),
     })
-    .from(activities)
-    .where(eq(activities.userId, userId));
+    .from(userActivities)
+    .where(eq(userActivities.userId, userId));
 
   return result[0];
 }
@@ -30,11 +30,13 @@ export async function getUserStats(userId: string) {
 export async function getUserActivities(userId: string, isOwner: boolean) {
   return await db
     .select()
-    .from(activities)
+    .from(userActivities)
     .where(
-      isOwner ? eq(activities.userId, userId) : eq(activities.isPublic, true), // si visiteur → que les publiques
+      isOwner
+        ? eq(userActivities.userId, userId)
+        : eq(userActivities.isPublic, true), // si visiteur → que les publiques
     )
-    .orderBy(desc(activities.createdAt));
+    .orderBy(desc(userActivities.createdAt));
 }
 
 export async function getUserStuff(userId: string) {
