@@ -37,33 +37,24 @@ export default function SignUp() {
   };
 
   const handleSignUp = async () => {
-    // Validation basique
     if (!email || !password || !firstName) {
-      console.error("Erreur de validation: Champs manquants");
       alert("Veuillez remplir tous les champs obligatoires.");
       return;
     }
 
     setLoading(true);
-    console.log("Tentative d'inscription pour:", email);
 
-    const { data, error } = await authClient.signUp.email({
+    const { error } = await authClient.signUp.email({
       email,
       password,
       name: `${firstName} ${lastName}`.trim(),
-      callbackURL: "/sz-app/dash",
     });
 
     if (error) {
-      console.error("Erreur:", error);
       alert(`Erreur: ${error.message}`);
-      setLoading(false); // On arrête le chargement seulement s'il y a une erreur
+      setLoading(false);
     } else {
-      console.log("Succès ! Redirection...");
-      // Forcer la redirection manuelle car Better Auth attend parfois
-      // une action utilisateur ou un changement d'état serveur
       router.push("/sz-app/dash");
-      router.refresh(); // Optionnel : pour forcer le layout à détecter la nouvelle session
     }
   };
 

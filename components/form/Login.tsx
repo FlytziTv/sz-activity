@@ -14,11 +14,20 @@ export default function Login() {
 
   const handleSocialSignIn = async (provider: "google" | "github") => {
     setLoading(true);
-    await authClient.signIn.social({
-      provider: provider,
-      callbackURL: "/sz-app/dash",
-    });
-    // Pas de finally ici car la page redirige
+    try {
+      const { error } = await authClient.signIn.social({
+        provider,
+        callbackURL: "/sz-app/dash",
+      });
+      if (error) {
+        alert(error.message);
+        setLoading(false);
+      }
+      // Si succès → redirection automatique, pas besoin de setLoading(false)
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
   };
 
   const handleLogin = async () => {
