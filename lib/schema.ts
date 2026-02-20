@@ -83,6 +83,37 @@ export const verifications = pgTable("verifications", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
+export const userProfiles = pgTable("user_profiles", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+
+  // Onboarding
+  onboardingCompleted: boolean("onboarding_completed").default(false),
+
+  // Profil randonneur
+  level: text("level"), // debutant | intermediaire | expert
+  preferredRouteType: text("preferred_route_type"), // boucle | trail | etc.
+  country: text("country"), // Pays
+  region: text("region"), // Région
+  objectives: text("objectives"), // ["se_depasser", "decouvrir", etc.]
+  frequency: text("frequency"), // occasionnel | regulier | intensif
+
+  // Corpulence
+  weight: integer("weight"), // en kg
+  height: integer("height"), // en cm
+  shoeSize: integer("shoe_size"), // pointure
+
+  // Objectifs
+  annualDistanceGoal: integer("annual_distance_goal"),
+  annualActivitiesGoal: integer("annual_activities_goal"),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // ============ STUFF ============
 export const stuff = pgTable("stuff", {
   id: uuid("id").defaultRandom().primaryKey(),

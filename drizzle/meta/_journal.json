@@ -8,6 +8,20 @@
       "when": 1771525560992,
       "tag": "0000_new_warbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771534770880,
+      "tag": "0001_lucky_shen",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771539048337,
+      "tag": "0002_cuddly_christian_walker",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "user_profiles" ALTER COLUMN "objectives" SET DATA TYPE text;
