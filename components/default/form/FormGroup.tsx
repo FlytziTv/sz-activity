@@ -8,6 +8,7 @@ export function FormGroup({
   placeholder,
   onChange,
   defaultValue,
+  require = true,
 }: {
   name: string;
   label: string;
@@ -15,6 +16,7 @@ export function FormGroup({
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   defaultValue?: string | number;
+  require?: boolean;
 }) {
   return (
     <FieldGroup>
@@ -26,7 +28,7 @@ export function FormGroup({
         placeholder={placeholder}
         onChange={onChange}
         defaultValue={defaultValue}
-        required
+        required={require}
       />
     </FieldGroup>
   );
