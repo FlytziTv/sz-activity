@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 // import Login from "@/components/form/Login";
-import SignUp from "@/components/form/Signup";
-import StepLevel from "@/components/onboarding/StepLevel";
-import StepRouteType from "@/components/onboarding/StepRouteType";
-import StepRegion from "@/components/onboarding/StepRegion";
-import StepObjectives from "@/components/onboarding/StepObjectives";
-import StepBody from "@/components/onboarding/StepBody";
+import SignUp from "@/components/login-signin/form/SignupForm";
+import StepLevel from "@/components/login-signin/onboarding/StepLevel";
+import StepRouteType from "@/components/login-signin/onboarding/StepRouteType";
+import StepRegion from "@/components/login-signin/onboarding/StepRegion";
+import StepObjectives from "@/components/login-signin/onboarding/StepObjectives";
+import StepBody from "@/components/login-signin/onboarding/StepBody";
 import Link from "next/link";
 
 const TOTAL_STEPS = 6;

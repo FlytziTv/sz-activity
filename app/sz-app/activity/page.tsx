@@ -1,6 +1,6 @@
 "use client";
 
-import ActivityCard from "@/components/cards/ActivityCard";
+import ActivityCard from "@/components/activity/cards/ActivityCard";
 import { activities } from "@/data/activities";
 
 export default function Activity() {

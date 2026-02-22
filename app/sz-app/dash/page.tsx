@@ -1,7 +1,7 @@
 "use client";
 
-import Weight from "@/components/items/weight";
-import { YearProgressWidget } from "@/components/Widget/YearWidget";
+import Weight from "@/components/dashboard/Widget/weight";
+import { YearProgressWidget } from "@/components/dashboard/Widget/YearWidget";
 
 export default function Dash() {
   return (

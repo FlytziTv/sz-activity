@@ -3,8 +3,8 @@ import { auth } from "@/lib/auth";
 import { stuff } from "@/lib/schema";
 import { headers } from "next/headers";
 import { eq, desc } from "drizzle-orm";
-import StuffCard from "@/components/cards/StuffCard";
-import StuffForm from "@/components/form/stuffsForm";
+import StuffCard from "@/components/stuffs/cards/StuffCard";
+import StuffForm from "@/components/stuffs/form/stuffsForm";
 export const dynamic = "force-dynamic";
 
 async function getStuff() {
