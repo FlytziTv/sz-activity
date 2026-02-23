@@ -1,4 +1,7 @@
-import { activities } from "@/data/activities";
+import { db } from "@/lib/db";
+import { activity } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+import { notFound } from "next/navigation";
 import {
   Car,
   ChartArea,
@@ -23,90 +26,112 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-const colorDifficulty = {
-  Facile: "bg-green-500",
-  Modérée: "bg-yellow-500",
-  Difficile: "bg-orange-500",
-  Ardu: "bg-red-500",
-} as const;
+async function getActivity(id: string) {
+  const result = await db
+    .select()
+    .from(activity)
+    .where(eq(activity.id, id))
+    .limit(1);
+  if (!result[0]) notFound();
+  return result[0];
+}
 
-const dataInfos = {
-  // Caractéristiques principales de l'effort
-  Principal: [
-    {
-      icons: Mountain,
-      label: "Activité",
-      value: "Randonnée Pédestre",
-    },
-    { icons: Ruler, label: "Distance", value: "9,68 km" },
-    {
-      icons: Clock,
-      label: "Durée moyenne",
-      value: "5h 05",
-    },
-    {
-      icons: ChartArea,
-      label: "Difficulté ",
-      value: "Difficile",
-    },
-  ],
+export default async function ActivityDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-  // Profil technique du terrain
-  Technique: [
-    {
-      icons: TrendingUp,
-      label: "Dénivelé positif",
-      value: "+ 800 m",
-    },
-    {
-      icons: TrendingDown,
-      label: "Dénivelé négatif",
-      value: "- 720 m",
-    },
-    {
-      icons: CircleArrowUp,
-      label: "Point haut",
-      value: "1 815 m",
-    },
-    {
-      icons: CircleArrowDown,
-      label: "Point bas",
-      value: "1 025 m",
-    },
-  ],
+  const item = await getActivity(id);
 
-  // Localisation géographique
-  Localisation: [
-    { icons: Earth, label: "Pays", value: "France" },
-    {
-      icons: MapPinned,
-      label: "Régions",
-      value: "Pyrénées, Massif des Trois-Seigneurs",
-    },
-  ],
+  const colorDifficulty = {
+    facile: "bg-green-500",
+    moyen: "bg-yellow-500",
+    difficile: "bg-orange-500",
+    expert: "bg-red-500",
+  } as const;
 
-  // Coordonnées de navigation
-  Coordonnées: [
-    {
-      icons: Flag,
-      label: "Point de départ",
-      value: "N 42.840324°",
-    },
-    {
-      icons: FlagTriangleRight,
-      label: "Point d'arrivée",
-      value: "E 1.485189°",
-    },
-  ],
-};
+  const dataInfos = {
+    // Caractéristiques principales de l'effort
+    Principal: [
+      {
+        icons: Mountain,
+        label: "Activité",
+        value: item.activityType,
+      },
+      {
+        icons: Ruler,
+        label: "Distance",
+        value: item.distance ? `${item.distance} km` : "-",
+      },
+      {
+        icons: Clock,
+        label: "Durée moyenne",
+        value: item.duration ? `${item.duration} min` : "-",
+      },
+      {
+        icons: ChartArea,
+        label: "Difficulté ",
+        value: item.difficulty,
+      },
+    ],
 
-export default function Page() {
+    // Profil technique du terrain
+    Technique: [
+      {
+        icons: TrendingUp,
+        label: "Dénivelé positif",
+        value: item.elevationGain ? `+ ${item.elevationGain} m` : "-",
+      },
+      {
+        icons: TrendingDown,
+        label: "Dénivelé négatif",
+        value: item.elevationLoss ? `- ${item.elevationLoss} m` : "-",
+      },
+      {
+        icons: CircleArrowUp,
+        label: "Point haut",
+        value: item.highestPoint ? `${item.highestPoint} m` : "-",
+      },
+      {
+        icons: CircleArrowDown,
+        label: "Point bas",
+        value: item.lowestPoint ? `${item.lowestPoint} m` : "-",
+      },
+    ],
+
+    // Localisation géographique
+    Localisation: [
+      { icons: Earth, label: "Pays", value: item.country ?? "-" },
+      { icons: MapPinned, label: "Région", value: item.region ?? "-" },
+    ],
+
+    // Coordonnées de navigation
+    Coordonnées: [
+      {
+        icons: Flag,
+        label: "Point de départ",
+        value: item.startLat ? `N ${item.startLat}°` : "-",
+      },
+      {
+        icons: FlagTriangleRight,
+        label: "Point d'arrivée",
+        value: item.endLng ? `E ${item.endLng}°` : "-",
+      },
+    ],
+  };
+
+  const diffKey =
+    item.difficulty?.toLowerCase() as keyof typeof colorDifficulty;
+  const badgeColor = colorDifficulty[diffKey] || "bg-gray-500";
+
   return (
     <div className="flex flex-col gap-4 max-w-7xl w-full m-auto p-4 bg-[#E8E8E8] border border-[#DBDBDB] rounded-3xl">
       <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center justify-between">
           <h2 className="font-semibold text-3xl">
-            {activities[0].name} - {activities[0].loc}
+            {item.title} - {item.location}
           </h2>
 
           <div className="flex flex-row gap-1 items-center justify-center h-9">
@@ -119,9 +144,9 @@ export default function Page() {
           <div className="flex flex-row gap-1.5 items-center">
             <Star size={14} fill="black" />
             <p className="text-black text-[13px] font-medium">
-              {activities[0].notes} (
+              {item.averageRating ?? 0} (
               <span className="text-black hover:text-black/70 font-normal hover:underline underline-offset-2 transition-color duration-150 cursor-pointer ">
-                {activities[0].avis} avis
+                {item.totalReviews ?? 0} avis
               </span>
               )
             </p>
@@ -130,44 +155,42 @@ export default function Page() {
           <div className="w-0.5 h-0.5 rounded-full bg-[#8d8d8d]" />
 
           <div className="flex flex-row gap-1.5 items-center">
-            <div
-              className={`w-2 h-2 rounded-full ${colorDifficulty[activities[0].difficulty]}`}
-            />
+            <div className={`w-2 h-2 rounded-full ${badgeColor}`} />
             <p className="text-black hover:text-black/70 text-[13px] font-normal hover:underline underline-offset-2 transition-color duration-150 cursor-pointer ">
-              {activities[0].difficulty}
+              {item.difficulty}
             </p>
           </div>
 
           <div className="w-0.5 h-0.5 rounded-full bg-[#8d8d8d]" />
 
           <p className="text-black hover:text-black/70 text-[13px] font-normal hover:underline underline-offset-2 transition-color duration-150 cursor-pointer ">
-            {activities[0].loc}
+            {item.location}
           </p>
         </div>
-        <p className="text-black text-sm">{activities[0].description}</p>
+        <p className="text-black text-sm">{item.description}</p>
       </div>
       <div className="grid grid-cols-6 grid-rows-2 w-full gap-2 aspect-16/5">
         <div className="col-span-4 row-span-2 rounded-l-2xl relative">
           <Image
-            src={activities[0].banner}
-            alt={activities[0].name}
+            src={item.bannerImage || "/no-img-activity.png"}
+            alt={item.title}
             fill
             className="object-cover rounded-l-lg absolute"
           />
+
           <div className="absolute bottom-4 left-4 flex flex-row gap-2 items-center justify-center">
             <button className="bg-white hover:bg-gray-200 text-black text-sm font-semibold p-3 rounded-full transition-colors duration-150 cursor-pointer ">
               <Play fill="black" size={18} />
             </button>
             <button className="bg-black/40 hover:bg-white text-white hover:text-black text-sm font-semibold p-3 rounded-full border border-white flex flex-row gap-2 items-center transition-colors duration-150 cursor-pointer ">
-              <Images size={18} />
-              {activities[0].numberPhotos} photos
+              <Images size={18} />2 photos
             </button>
           </div>
         </div>
         <div className="col-span-2 row-span-1 rounded-r-2xl relative">
           <Image
-            src={activities[0].image?.[0] || ""}
-            alt={activities[0].name}
+            src={item.bannerImage || "/no-img-activity.png"}
+            alt={item.title}
             fill
             className="object-cover rounded-tr-lg absolute"
           />
@@ -184,9 +207,12 @@ export default function Page() {
         </div>
 
         <div className="grid grid-cols-3 p-3 gap-2 w-full  border-b border-[#D2D2D2]">
-          <StatsFiche label="Création" value="13 ferv. 2026" />
-          <StatsFiche label="Type" value={activities[0].type} />
-          <StatsFiche label="Dernier avis" value="14 févr. 2026" />
+          <StatsFiche
+            label="Création"
+            value={new Date(item.createdAt).toLocaleDateString("fr-FR")}
+          />
+          <StatsFiche label="Type" value={item.routeType} />
+          <StatsFiche label="Dernier avis" value="-" />
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-3 w-full ">

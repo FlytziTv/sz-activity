@@ -1,14 +1,24 @@
 import Image from "next/image";
-import type { Activity } from "@/data/activities";
 import { Heart } from "lucide-react";
+import { activity } from "@/lib/schema";
+import Link from "next/link";
 
-export default function ActivityCard({ activity }: { activity: Activity }) {
+type ActivityType = typeof activity.$inferSelect;
+
+export default function ActivityCard({
+  activity: item,
+}: {
+  activity: ActivityType;
+}) {
   return (
-    <div className="bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-col gap-2">
+    <Link
+      href={`/sz-app/activity/${item.id}`}
+      className="bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-col gap-2"
+    >
       <div className="relative w-full aspect-video rounded-2xl ">
         <Image
-          src={activity.banner}
-          alt={`${activity.name}, ${activity.loc}`}
+          src={item.bannerImage || "/no-img-activity.png"}
+          alt={item.title}
           fill
           className="object-cover rounded-lg "
         />
@@ -19,19 +29,20 @@ export default function ActivityCard({ activity }: { activity: Activity }) {
       </div>
       <div className="bg-[#FFFFFF] border border-[#D2D2D2] rounded-lg p-2 w-full flex flex-col items-center gap-2">
         <div className="flex flex-col items-center justify-center gap-0">
-          <h4 className="text-sm font-semibold text-gray-900">
-            {activity.name}
-          </h4>
-          <p className="text-xs rounded-sm text-gray-500">{activity.loc}</p>
+          <h4 className="text-sm font-semibold text-gray-900">{item.title}</h4>
+          <p className="text-xs rounded-sm text-gray-500">{item.location}</p>
         </div>
         <div className="h-0.5 bg-[#EAEAEA] w-[90%] rounded-lg" />
         <div className="grid grid-cols-3 w-full">
-          {activity.stats.map((stat, index) => (
-            <DataActivity key={index} value={stat.value} label={stat.label} />
-          ))}
+          <DataActivity value={`${item.distance ?? "-"} km`} label="Distance" />
+          <DataActivity
+            value={`${item.elevationGain ?? "-"} m`}
+            label="Dénivelé"
+          />
+          <DataActivity value={`${item.duration ?? "-"} min`} label="Durée" />
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -87,3 +98,32 @@ export function DataActivity({
   </div>
 </div>; */
 }
+
+// <div className="bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-2 flex flex-col gap-2">
+//   <div className="relative w-full aspect-video rounded-2xl ">
+//     <Image
+//       src={activity.banner}
+//       alt={`${activity.name}, ${activity.loc}`}
+//       fill
+//       className="object-cover rounded-lg "
+//     />
+
+//     <button className="absolute top-2 right-2 flex items-center justify-center text-white bg-black/40 h-7 w-7 rounded-2xl">
+//       <Heart size={16} />
+//     </button>
+//   </div>
+//   <div className="bg-[#FFFFFF] border border-[#D2D2D2] rounded-lg p-2 w-full flex flex-col items-center gap-2">
+//     <div className="flex flex-col items-center justify-center gap-0">
+//       <h4 className="text-sm font-semibold text-gray-900">
+//         {activity.name}
+//       </h4>
+//       <p className="text-xs rounded-sm text-gray-500">{activity.loc}</p>
+//     </div>
+//     <div className="h-0.5 bg-[#EAEAEA] w-[90%] rounded-lg" />
+//     <div className="grid grid-cols-3 w-full">
+//       {activity.stats.map((stat, index) => (
+//         <DataActivity key={index} value={stat.value} label={stat.label} />
+//       ))}
+//     </div>
+//   </div>
+// </div>

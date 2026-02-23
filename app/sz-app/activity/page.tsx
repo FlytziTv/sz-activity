@@ -1,14 +1,23 @@
-"use client";
-
+import { db } from "@/lib/db";
+import { desc } from "drizzle-orm";
 import ActivityCard from "@/components/activity/cards/ActivityCard";
-import { activities } from "@/data/activities";
+import { activity } from "@/lib/schema";
 
-export default function Activity() {
+async function getActivities() {
+  return await db.select().from(activity).orderBy(desc(activity.createdAt));
+}
+
+export default async function ActivityPage() {
+  const activities = await getActivities();
   return (
     <div className="grid grid-cols-5 gap-2 ">
-      {activities.map((activity) => (
-        <ActivityCard key={activity.id} activity={activity} />
-      ))}
+      {activities.length === 0 ? (
+        <p className="text-gray-500 col-span-5">
+          Aucune activité pour l&apos;instant.
+        </p>
+      ) : (
+        activities.map((item) => <ActivityCard key={item.id} activity={item} />)
+      )}
     </div>
   );
 }
