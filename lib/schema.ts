@@ -137,6 +137,7 @@ export const activity = pgTable("activity", {
     .notNull()
     .references(() => users.id),
   title: text("title").notNull(),
+  location: text("location").notNull(),
   description: text("description"),
   bannerImage: text("banner_image"),
 
@@ -149,6 +150,7 @@ export const activity = pgTable("activity", {
 
   // Stats
   distance: real("distance"), // en km
+  duration: integer("duration"), // en minutes
   elevationGain: integer("elevation_gain"), // dénivelé positif en m
   elevationLoss: integer("elevation_loss"), // dénivelé négatif en m
   highestPoint: integer("highest_point"), // point le plus haut en m

@@ -240,3 +240,52 @@ export function ActivityType({
     </FormGroupChildren>
   );
 }
+
+export function Multipos({
+  name,
+  label,
+  type,
+  placeholder1,
+  placeholder2,
+  onChange1,
+  onChange2,
+  defaultValueInput1,
+  defaultValueInput2,
+  requireInput,
+}: {
+  name: string;
+  label: string;
+  type: string;
+  placeholder1?: string;
+  placeholder2?: string;
+  onChange1?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange2?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  defaultValueInput1?: string | number;
+  defaultValueInput2?: string | number;
+  requireInput?: boolean;
+}) {
+  return (
+    <FormGroupChildren name={name} label={label}>
+      <div className="grid grid-cols-2 gap-2 w-full">
+        <Input
+          id={name}
+          name={name}
+          type={type}
+          placeholder={placeholder1}
+          onChange={onChange1}
+          defaultValue={defaultValueInput1}
+          required={requireInput || true}
+        />
+        <Input
+          id={name}
+          name={name}
+          type={type}
+          placeholder={placeholder2}
+          onChange={onChange2}
+          defaultValue={defaultValueInput2}
+          required={requireInput || true}
+        />
+      </div>
+    </FormGroupChildren>
+  );
+}

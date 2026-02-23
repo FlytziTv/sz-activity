@@ -24,6 +24,7 @@ import {
   DataCreateDificulty,
   DataCreateDistance,
   DataCreateTime,
+  Multipos,
 } from "@/components/activity/form/content/DataCreateActivity";
 import { addActivity } from "@/actions/activity";
 
@@ -40,23 +41,31 @@ export default function CreateActivity() {
 
   // State étape 2
   const [type, setType] = useState("");
-  const [distance, setDistance] = useState("km");
-  const [duration, setDuration] = useState("min");
+  const [distance, setDistance] = useState("");
+  const [distanceUnit, setDistanceUnit] = useState("km");
+  const [duration, setDuration] = useState("");
+  const [durationUnit, setDurationUnit] = useState("min");
   const [difficulty, setDifficulty] = useState("moyen");
 
   // State étape 3
-  const [denivele_positif, setDenivelePositif] = useState("");
-  const [denivele_negatif, setDeniveleNegatif] = useState("");
-  const [points_haut, setPointsHaut] = useState("");
-  const [points_bas, setPointsBas] = useState("");
+  const [elevationPositif, setElevationPositif] = useState("");
+  const [elevationUnitPositif, setElevationUnitPositif] = useState("m");
+  const [elevationNegative, setElevationNegative] = useState("");
+  const [elevationNegativeUnit, setElevationNegativeUnit] = useState("m");
+  const [pointTop, setPointTop] = useState("");
+  const [pointTopUnit, setPointTopUnit] = useState("m");
+  const [pointBottom, setPointBottom] = useState("");
+  const [pointBottomUnit, setPointBottomUnit] = useState("m");
 
   // State étape 4
   const [country, setCountry] = useState("");
   const [region, setRegion] = useState("");
 
   // State étape 5
-  const [start_point, setStartPoint] = useState("");
-  const [end_point, setEndPoint] = useState("");
+  const [start_point1, setStartPoint1] = useState("");
+  const [start_point2, setStartPoint2] = useState("");
+  const [end_point1, setEndPoint1] = useState("");
+  const [end_point2, setEndPoint2] = useState("");
 
   const canProceed = (): boolean => {
     switch (step) {
@@ -66,15 +75,15 @@ export default function CreateActivity() {
         return !!type && !!distance && !!duration && !!difficulty;
       case 3:
         return (
-          !!denivele_positif &&
-          !!denivele_negatif &&
-          !!points_haut &&
-          !!points_bas
+          !!elevationPositif &&
+          !!elevationNegative &&
+          !!pointTop &&
+          !!pointBottom
         );
       case 4:
         return !!country && !!region;
       case 5:
-        return !!start_point && !!end_point;
+        return !!start_point1 && !!start_point2 && !!end_point1 && !!end_point2;
       default:
         return true;
     }
@@ -88,40 +97,68 @@ export default function CreateActivity() {
   const handleClose = () => {
     setOpen(false);
     setStep(1);
+    // State 1
     setTitle("");
     setLocation("");
     setDescription("");
+    // State 2
     setType("");
-    setDistance("km");
-    setDuration("min");
+    setDistance("");
+    setDistanceUnit("km");
+    setDuration("");
+    setDurationUnit("min");
     setDifficulty("moyen");
-    setDenivelePositif("");
-    setDeniveleNegatif("");
-    setPointsHaut("");
-    setPointsBas("");
+    // State 3
+    setElevationPositif("");
+    setElevationUnitPositif("m");
+    setElevationNegative("");
+    setElevationNegativeUnit("m");
+    setPointTop("");
+    setPointTopUnit("m");
+    setPointBottom("");
+    setPointBottomUnit("m");
+    // State 4
     setCountry("");
     setRegion("");
-    setStartPoint("");
-    setEndPoint("");
+    // State 5
+    setStartPoint1("");
+    setStartPoint2("");
+    setEndPoint1("");
+    setEndPoint2("");
   };
 
   const handleSubmit = async () => {
     const formData = new FormData();
+    // state 1
     formData.set("title", title);
     formData.set("location", location);
     formData.set("description", description);
     formData.set("type", type);
+
+    // state 2
     formData.set("distance", distance);
+    formData.set("distance_unit", distanceUnit);
     formData.set("duration", duration);
+    formData.set("duration_unit", durationUnit);
     formData.set("difficulty", difficulty);
-    formData.set("denivele_positif", denivele_positif);
-    formData.set("denivele_negatif", denivele_negatif);
-    formData.set("points_haut", points_haut);
-    formData.set("points_bas", points_bas);
+
+    // state 3
+    formData.set("denivele_positif", elevationPositif);
+    formData.set("denivele_positif_unit", elevationUnitPositif);
+    formData.set("denivele_negatif", elevationNegative);
+    formData.set("denivele_negatif_unit", elevationNegativeUnit);
+    formData.set("points_haut", pointTop);
+    formData.set("points_haut_unit", pointTopUnit);
+    formData.set("points_bas", pointBottom);
+    formData.set("points_bas_unit", pointBottomUnit);
+
+    // state 4
     formData.set("country", country);
     formData.set("region", region);
-    formData.set("start_point", start_point);
-    formData.set("end_point", end_point);
+
+    // state 5
+    formData.set("start_point", `${start_point1},${start_point2}`);
+    formData.set("end_point", `${end_point1},${end_point2}`);
 
     await addActivity(formData);
     handleClose();
@@ -189,8 +226,10 @@ export default function CreateActivity() {
                   label="Distance"
                   type="number"
                   placeholder="Ex: 12.5"
-                  defaultValueSelect="km"
+                  defaultValueInput={distance}
+                  defaultValueSelect={distanceUnit}
                   onChange={(e) => setDistance(e.target.value)}
+                  onSelectChange={setDistanceUnit}
                 />
 
                 <DataCreateTime
@@ -198,13 +237,15 @@ export default function CreateActivity() {
                   label="Durée"
                   type="number"
                   placeholder="Ex: 240"
-                  defaultValueSelect="min"
+                  defaultValueInput={duration}
+                  defaultValueSelect={durationUnit}
                   onChange={(e) => setDuration(e.target.value)}
+                  onSelectChange={setDurationUnit}
                 />
                 <DataCreateDificulty
                   name="difficulty"
                   label="Difficulté"
-                  defaultValueSelect="facile"
+                  defaultValueSelect={difficulty}
                   onSelectChange={setDifficulty}
                 />
               </>
@@ -219,16 +260,20 @@ export default function CreateActivity() {
                   label="Dénivelé positif"
                   type="number"
                   placeholder="Ex: 12.5"
-                  defaultValueSelect="m"
-                  onChange={(e) => setDenivelePositif(e.target.value)}
+                  defaultValueInput={elevationPositif}
+                  defaultValueSelect={elevationUnitPositif}
+                  onChange={(e) => setElevationPositif(e.target.value)}
+                  onSelectChange={setElevationUnitPositif}
                 />
                 <DataCreateDistance
                   name="denivele_negatif"
                   label="Dénivelé négatif"
                   type="number"
                   placeholder="Ex: 12.5"
-                  defaultValueSelect="m"
-                  onChange={(e) => setDeniveleNegatif(e.target.value)}
+                  defaultValueInput={elevationNegative}
+                  defaultValueSelect={elevationNegativeUnit}
+                  onChange={(e) => setElevationNegative(e.target.value)}
+                  onSelectChange={setElevationNegativeUnit}
                 />
 
                 <DataCreateDistance
@@ -236,16 +281,20 @@ export default function CreateActivity() {
                   label="Points haut"
                   type="number"
                   placeholder="Ex: 12.5"
-                  defaultValueSelect="m"
-                  onChange={(e) => setPointsHaut(e.target.value)}
+                  defaultValueInput={pointTop}
+                  defaultValueSelect={pointTopUnit}
+                  onChange={(e) => setPointTop(e.target.value)}
+                  onSelectChange={setPointTopUnit}
                 />
                 <DataCreateDistance
                   name="points_bas"
                   label="Points bas"
                   type="number"
                   placeholder="Ex: 12.5"
-                  defaultValueSelect="m"
-                  onChange={(e) => setPointsBas(e.target.value)}
+                  defaultValueInput={pointBottom}
+                  defaultValueSelect={pointBottomUnit}
+                  onChange={(e) => setPointBottom(e.target.value)}
+                  onSelectChange={setPointBottomUnit}
                 />
               </>
             )}
@@ -274,19 +323,24 @@ export default function CreateActivity() {
             {/* Etape 5 */}
             {step === 5 && (
               <>
-                <FormGroup
+                <Multipos
                   name="start_point"
                   label="Point de départ"
                   type="text"
-                  placeholder="Ex: N 42.840324°, E 1.234567°"
-                  onChange={(e) => setStartPoint(e.target.value)}
+                  placeholder1="Latitude"
+                  placeholder2="Longitude"
+                  onChange1={(e) => setStartPoint1(e.target.value)}
+                  onChange2={(e) => setStartPoint2(e.target.value)}
                 />
-                <FormGroup
+
+                <Multipos
                   name="end_point"
                   label="Point d'arrivée"
                   type="text"
-                  placeholder="Ex: N 42.840324°, E 1.234567°"
-                  onChange={(e) => setEndPoint(e.target.value)}
+                  placeholder1="Latitude"
+                  placeholder2="Longitude"
+                  onChange1={(e) => setEndPoint1(e.target.value)}
+                  onChange2={(e) => setEndPoint2(e.target.value)}
                 />
               </>
             )}

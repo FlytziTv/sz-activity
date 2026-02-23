@@ -12,7 +12,7 @@ export async function addActivity(formData: FormData) {
 
   // Distance → toujours en km
   const distanceValue = parseFloat(formData.get("distance") as string) || null;
-  const distanceUnit = formData.get("distanceUnit") as string;
+  const distanceUnit = formData.get("distance_unit") as string;
   const distanceKm = distanceValue
     ? distanceUnit === "m"
       ? distanceValue / 1000
@@ -21,7 +21,7 @@ export async function addActivity(formData: FormData) {
 
   // Durée → toujours en minutes
   const durationValue = parseInt(formData.get("duration") as string) || null;
-  const durationUnit = formData.get("durationUnit") as string;
+  const durationUnit = formData.get("duration_unit") as string;
   const durationMin = durationValue
     ? durationUnit === "h"
       ? durationValue * 60
@@ -31,13 +31,22 @@ export async function addActivity(formData: FormData) {
   // Dénivelés → toujours en mètres
   const toMeters = (name: string) => {
     const value = parseInt(formData.get(name) as string) || null;
-    const unit = formData.get(`${name}Unit`) as string;
+    const unit = formData.get(`${name}_unit`) as string; // Ajout de l'underscore
     return value ? (unit === "km" ? value * 1000 : value) : null;
   };
 
   // Coordonnées GPS
-  const parseCoords = (value: string) => {
-    const num = parseFloat(value);
+  const parseCoords = (coordString: string, index: number) => {
+    if (!coordString) return null;
+    const parts = coordString.split(",");
+    const val = parts[index]?.trim();
+
+    if (!val) return null;
+
+    // Nettoyage : on ne garde que les chiffres, le point et le signe moins
+    const cleaned = val.replace(/[^0-9.-]/g, "");
+    const num = parseFloat(cleaned);
+
     return isNaN(num) ? null : num;
   };
 
@@ -46,22 +55,39 @@ export async function addActivity(formData: FormData) {
 
   await db.insert(activity).values({
     createdByUserId: session.user.id,
+    // state 1
     title: formData.get("title") as string,
+    location: formData.get("location") as string,
     description: (formData.get("description") as string) || null,
-    activityType: (formData.get("type") as any) || "randonnee",
-    difficulty: (formData.get("difficulty") as any) || "moyen",
+    // Correction ESLint : On cast vers le type spécifique de l'enum au lieu de 'any'
+    activityType:
+      (formData.get("type") as typeof activity.$inferInsert.activityType) ||
+      "randonnee",
+
+    // state 2
     distance: distanceKm,
     duration: durationMin,
+
+    // Correction ESLint
+    difficulty:
+      (formData.get("difficulty") as typeof activity.$inferInsert.difficulty) ||
+      "moyen",
+
+    // state 3
     elevationGain: toMeters("denivele_positif"),
     elevationLoss: toMeters("denivele_negatif"),
     highestPoint: toMeters("points_haut"),
     lowestPoint: toMeters("points_bas"),
-    country: (formData.get("country") as string) || null,
-    region: (formData.get("region") as string) || null,
-    startLat: parseCoords(startPoint.split(",")[0]),
-    startLng: parseCoords(startPoint.split(",")[1]),
-    endLat: parseCoords(endPoint.split(",")[0]),
-    endLng: parseCoords(endPoint.split(",")[1]),
+
+    // state 4
+    country: formData.get("country") as string,
+    region: formData.get("region") as string,
+
+    // state 5
+    startLat: parseCoords(startPoint, 0),
+    startLng: parseCoords(startPoint, 1),
+    endLat: parseCoords(endPoint, 0),
+    endLng: parseCoords(endPoint, 1),
   });
 
   revalidatePath("/sz-app/dash");
