@@ -131,7 +131,7 @@ export const stuff = pgTable("stuff", {
 });
 
 // ============ FICHE RANDONNEE ============
-export const hikes = pgTable("hikes", {
+export const activity = pgTable("activity", {
   id: uuid("id").defaultRandom().primaryKey(),
   createdByUserId: text("created_by_user_id")
     .notNull()
@@ -174,7 +174,7 @@ export const hikePointsOfInterest = pgTable("hike_points_of_interest", {
   id: uuid("id").defaultRandom().primaryKey(),
   hikeId: uuid("hike_id")
     .notNull()
-    .references(() => hikes.id, { onDelete: "cascade" }),
+    .references(() => activity.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   description: text("description"),
   lat: real("lat"),
@@ -188,7 +188,7 @@ export const userActivities = pgTable("user_activities", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  hikeId: uuid("hike_id").references(() => hikes.id), // nullable → sortie libre
+  hikeId: uuid("hike_id").references(() => activity.id), // nullable → sortie libre
 
   title: text("title").notNull(),
   description: text("description"),
@@ -232,7 +232,7 @@ export const reviews = pgTable("reviews", {
   id: uuid("id").defaultRandom().primaryKey(),
   hikeId: uuid("hike_id")
     .notNull()
-    .references(() => hikes.id, { onDelete: "cascade" }),
+    .references(() => activity.id, { onDelete: "cascade" }),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -292,6 +292,6 @@ export const listActivities = pgTable("list_activities", {
     .references(() => lists.id, { onDelete: "cascade" }),
   hikeId: uuid("hike_id")
     .notNull()
-    .references(() => hikes.id, { onDelete: "cascade" }),
+    .references(() => activity.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

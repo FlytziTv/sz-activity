@@ -27,12 +27,27 @@ const difficulty = [
   { title: "Expert", value: "expert" },
 ];
 
+const activityType = [
+  { title: "Randonnée", value: "randonnee" },
+  { title: "Ski de randonnée", value: "ski-randonnee" },
+  { title: "Via ferrata", value: "via-ferrata" },
+  { title: "Raquettes", value: "raquettes" },
+  { title: "Marche", value: "marche" },
+  { title: "Trail", value: "trail" },
+  { title: "VTT", value: "vtt" },
+  { title: "Alpinisme", value: "alpinisme" },
+  { title: "Escalade", value: "escalade" },
+  { title: "Canyoning", value: "canyoning" },
+  { title: "Autre", value: "autre" },
+];
+
 export function DataCreateDistance({
   name,
   label,
   type,
   placeholder,
   onChange,
+  onSelectChange,
   defaultValueInput,
   requireInput,
   defaultValueSelect,
@@ -43,6 +58,7 @@ export function DataCreateDistance({
   type: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelectChange?: (value: string) => void;
   defaultValueInput?: string | number;
   requireInput?: boolean;
   defaultValueSelect?: string;
@@ -62,8 +78,9 @@ export function DataCreateDistance({
           className="col-span-2"
         />
         <Select
-          name={name}
+          name={`${name}Unit`}
           defaultValue={defaultValueSelect}
+          onValueChange={onSelectChange}
           key={defaultValueSelect}
           required={requireSelect || true}
         >
@@ -91,6 +108,7 @@ export function DataCreateTime({
   type,
   placeholder,
   onChange,
+  onSelectChange,
   defaultValueInput,
   requireInput,
   defaultValueSelect,
@@ -101,6 +119,7 @@ export function DataCreateTime({
   type: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelectChange?: (value: string) => void;
   defaultValueInput?: string | number;
   requireInput?: boolean;
   defaultValueSelect?: string;
@@ -120,9 +139,10 @@ export function DataCreateTime({
           className="col-span-2"
         />
         <Select
-          name={name}
+          name={`${name}Unit`}
           defaultValue={defaultValueSelect}
           key={defaultValueSelect}
+          onValueChange={onSelectChange}
           required={requireSelect || true}
         >
           <SelectTrigger className="w-full">
@@ -147,15 +167,12 @@ export function DataCreateDificulty({
   name,
   label,
   defaultValueSelect,
+  onSelectChange,
   requireSelect,
 }: {
   name: string;
   label: string;
-  type: string;
-  placeholder?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  defaultValueInput?: string | number;
-  requireInput?: boolean;
+  onSelectChange?: (value: string) => void;
   defaultValueSelect?: string;
   requireSelect?: boolean;
 }) {
@@ -165,14 +182,54 @@ export function DataCreateDificulty({
         name={name}
         defaultValue={defaultValueSelect}
         key={defaultValueSelect}
+        onValueChange={onSelectChange}
         required={requireSelect || true}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="" />
+          <SelectValue placeholder="Choisissez une difficulté" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
             {difficulty.map((dist) => (
+              <SelectItem key={dist.value} value={dist.value}>
+                {dist.title}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </FormGroupChildren>
+  );
+}
+
+export function ActivityType({
+  name,
+  label,
+  defaultValueSelect,
+  onSelectChange,
+  requireSelect,
+}: {
+  name: string;
+  label: string;
+  onSelectChange?: (value: string) => void;
+  defaultValueSelect?: string;
+  requireSelect?: boolean;
+}) {
+  return (
+    <FormGroupChildren name={name} label={label}>
+      <Select
+        name={name}
+        defaultValue={defaultValueSelect}
+        key={defaultValueSelect}
+        onValueChange={onSelectChange}
+        required={requireSelect || true}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Choisissez un type d'activité" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {activityType.map((dist) => (
               <SelectItem key={dist.value} value={dist.value}>
                 {dist.title}
               </SelectItem>

@@ -16,17 +16,22 @@ const type = [
 
 export default function VisibilityLists({
   defaultValue,
+  require = true,
+  onChange,
 }: {
   defaultValue?: string;
+  onChange?: (value: string) => void;
+  require?: boolean;
 }) {
   return (
     <FieldGroup>
-      <FieldLabel htmlFor="category">Visibilité</FieldLabel>
+      <FieldLabel htmlFor="visibility">Visibilité</FieldLabel>
       <Select
-        name="category"
+        name="visibility"
         defaultValue={defaultValue}
         key={defaultValue}
-        required
+        required={require}
+        onValueChange={onChange}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Choisir une visibilité" />
