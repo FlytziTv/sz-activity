@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { activity } from "@/lib/schema";
+import { activity, users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import {
@@ -28,8 +28,35 @@ import Image from "next/image";
 
 async function getActivity(id: string) {
   const result = await db
-    .select()
+    .select({
+      id: activity.id,
+      title: activity.title,
+      location: activity.location,
+      description: activity.description,
+      bannerImage: activity.bannerImage,
+      activityType: activity.activityType,
+      routeType: activity.routeType,
+      difficulty: activity.difficulty,
+      distance: activity.distance,
+      duration: activity.duration,
+      elevationGain: activity.elevationGain,
+      elevationLoss: activity.elevationLoss,
+      highestPoint: activity.highestPoint,
+      lowestPoint: activity.lowestPoint,
+      country: activity.country,
+      region: activity.region,
+      startLat: activity.startLat,
+      startLng: activity.startLng,
+      endLat: activity.endLat,
+      endLng: activity.endLng,
+      averageRating: activity.averageRating,
+      totalReviews: activity.totalReviews,
+      createdAt: activity.createdAt,
+      createdByUserId: activity.createdByUserId,
+      creatorName: users.name,
+    })
     .from(activity)
+    .leftJoin(users, eq(activity.createdByUserId, users.id))
     .where(eq(activity.id, id))
     .limit(1);
   if (!result[0]) notFound();
@@ -212,7 +239,7 @@ export default async function ActivityDetailPage({
             value={new Date(item.createdAt).toLocaleDateString("fr-FR")}
           />
           <StatsFiche label="Type" value={item.routeType} />
-          <StatsFiche label="Dernier avis" value="-" />
+          <StatsFiche label="Crée par" value={item.creatorName || "-"} />
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-3 w-full ">

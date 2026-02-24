@@ -17,11 +17,13 @@ export default function Dash() {
         2×1
       </div> */}
       <Weight />
-      <div className="col-span-3 row-span-4 bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-4 flex flex-col justify-between">
+      <div className="col-span-3 row-span-4 bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-4 flex flex-col gap-2">
         {/* Header */}
-        <div className="flex flex-row items-center justify-between">
-          <h5 className="text-black text-base font-semibold">Stats</h5>
-          <p className="text-black text-sm font-medium"></p>
+
+        <h1 className="text-black font-semibold">Vos objectifs</h1>
+
+        <div className="flex flex-row gap-2 w-full bg-[#FFFFFF] border border-[#D2D2D2] rounded-lg py-2 px-3">
+          <h1 className="text-black font-medium">Objectif n°1</h1>
         </div>
       </div>
     </div>
