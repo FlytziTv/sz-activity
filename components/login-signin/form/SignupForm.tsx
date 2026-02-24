@@ -6,14 +6,8 @@ import { GithubIcon } from "@/components/default/icons/GithubIcon";
 import { GoogleIcon } from "@/components/default/icons/GoogleIcon";
 import { Button } from "@/components/ui/button";
 import { FormGroup } from "@/components/default/form/FormGroup";
-import { OnboardingData } from "@/app/page";
-import { saveOnboardingProfile } from "@/actions/onboarding";
 
-interface Props {
-  onboardingData: OnboardingData;
-}
-
-export default function SignUp({ onboardingData }: Props) {
+export default function SignUp() {
   const router = useRouter();
 
   const [firstName, setFirstName] = useState("");
@@ -33,8 +27,6 @@ export default function SignUp({ onboardingData }: Props) {
         alert(error.message);
         setLoading(false);
       }
-      // Si succès → redirection automatique
-      // On ne peut pas sauvegarder l'onboarding ici car pas de session encore
     } catch (err) {
       console.error(err);
       setLoading(false);
@@ -60,9 +52,6 @@ export default function SignUp({ onboardingData }: Props) {
       setLoading(false);
       return;
     }
-
-    // Compte créé → on sauvegarde les données d'onboarding
-    await saveOnboardingProfile(onboardingData);
 
     router.push("/sz-app/dash");
   };
