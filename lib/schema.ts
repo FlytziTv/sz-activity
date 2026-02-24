@@ -201,6 +201,8 @@ export const userActivities = pgTable("user_activities", {
   elevationGain: integer("elevation_gain"),
   duration: integer("duration"), // en minutes
 
+  status: text("status").notNull().default("completed"), // completed | planned
+
   isPublic: boolean("is_public").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
