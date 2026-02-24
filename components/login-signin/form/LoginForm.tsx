@@ -4,8 +4,8 @@ import { authClient } from "@/lib/auth-client";
 import { GithubIcon } from "@/components/default/icons/GithubIcon";
 import { GoogleIcon } from "@/components/default/icons/GoogleIcon";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { FormGroup } from "@/components/default/form/FormGroup";
+import { toast } from "sonner";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -20,7 +20,8 @@ export default function Login() {
         callbackURL: "/sz-app/dash",
       });
       if (error) {
-        alert(error.message);
+        toast.error(error.message);
+        // alert();
         setLoading(false);
       }
       // Si succès → redirection automatique, pas besoin de setLoading(false)
@@ -41,7 +42,8 @@ export default function Login() {
     });
 
     if (error) {
-      alert(`Erreur: ${error.message}`);
+      toast.error(error.message);
+      // alert(`Erreur: ${error.message}`);
       setLoading(false);
     }
     // Si succès, Better Auth gère la redirection

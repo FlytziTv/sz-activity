@@ -6,6 +6,7 @@ import { GithubIcon } from "@/components/default/icons/GithubIcon";
 import { GoogleIcon } from "@/components/default/icons/GoogleIcon";
 import { Button } from "@/components/ui/button";
 import { FormGroup } from "@/components/default/form/FormGroup";
+import { toast } from "sonner";
 
 export default function SignUp() {
   const router = useRouter();
@@ -24,7 +25,8 @@ export default function SignUp() {
         callbackURL: "/sz-app/dash",
       });
       if (error) {
-        alert(error.message);
+        toast.error(error.message);
+        // alert(error.message);
         setLoading(false);
       }
     } catch (err) {
@@ -35,7 +37,8 @@ export default function SignUp() {
 
   const handleSignUp = async () => {
     if (!email || !password || !firstName) {
-      alert("Veuillez remplir tous les champs obligatoires.");
+      toast.warning("Veuillez remplir tous les champs obligatoires.");
+      // alert("Veuillez remplir tous les champs obligatoires.");
       return;
     }
 
@@ -48,7 +51,8 @@ export default function SignUp() {
     });
 
     if (error) {
-      alert(`Erreur: ${error.message}`);
+      toast.error(error.message);
+      // alert(`Erreur: ${error.message}`);
       setLoading(false);
       return;
     }
