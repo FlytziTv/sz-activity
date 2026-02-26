@@ -30,25 +30,35 @@ export async function addUserActivity(formData: FormData) {
       : durationValue
     : null;
 
-  // Dénivelé → toujours en mètres
-  const elevationValue = parseInt(formData.get("elevation") as string) || null;
-  const elevationUnit = formData.get("elevationUnit") as string; // "m" ou "km"
-  const elevationM = elevationValue
-    ? elevationUnit === "km"
-      ? elevationValue * 1000
-      : elevationValue
-    : null;
+  // Dénivelés → toujours en mètres
+  const toMeters = (name: string, unitName: string) => {
+    const value = parseInt(formData.get(name) as string) || null;
+    const unit = formData.get(unitName) as string;
+    return value ? (unit === "km" ? value * 1000 : value) : null;
+  };
 
-  const activity = await db
+  const insertedActivity = await db
     .insert(userActivities)
     .values({
       userId: session.user.id,
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
       date: dateStr ? new Date(dateStr) : new Date(),
+      activityType:
+        (formData.get(
+          "activityType",
+        ) as typeof userActivities.$inferInsert.activityType) || "randonnee",
       duration: durationMin,
       distance: distanceKm,
-      elevationGain: elevationM,
+      elevationGain: toMeters("elevation", "elevationUnit"),
+      elevationLoss: toMeters("elevationLoss", "elevationLossUnit"),
+      location: (formData.get("location") as string) || null,
+      startTime: (formData.get("startTime") as string) || null,
+      endTime: (formData.get("endTime") as string) || null,
+      caloriesBurned:
+        parseInt(formData.get("caloriesBurned") as string) || null,
+      avgHeartRate: parseInt(formData.get("avgHeartRate") as string) || null,
+      effort: (formData.get("effort") as string) || null,
       isPublic: formData.get("visibility") === "public",
       hikeId: (formData.get("hike") as string) || null,
     })
@@ -58,7 +68,7 @@ export async function addUserActivity(formData: FormData) {
   if (stuffIds.length > 0) {
     await db.insert(userActivityStuff).values(
       stuffIds.map((stuffId) => ({
-        userActivityId: activity[0].id,
+        userActivityId: insertedActivity[0].id,
         stuffId,
       })),
     );

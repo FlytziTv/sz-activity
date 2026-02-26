@@ -190,19 +190,32 @@ export const userActivities = pgTable("user_activities", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  hikeId: uuid("hike_id").references(() => activity.id), // nullable → sortie libre
+  hikeId: uuid("hike_id").references(() => activity.id),
 
   title: text("title").notNull(),
   description: text("description"),
   date: timestamp("date").notNull(),
 
+  // Type
+  activityType: activityTypeEnum("activity_type")
+    .notNull()
+    .default("randonnee"),
+
   // Stats perso
-  distance: real("distance"), // en km
+  distance: real("distance"),
   elevationGain: integer("elevation_gain"),
-  duration: integer("duration"), // en minutes
+  elevationLoss: integer("elevation_loss"),
+  duration: integer("duration"),
 
-  status: text("status").notNull().default("completed"), // completed | planned
+  // Extras
+  startTime: text("start_time"),
+  endTime: text("end_time"),
+  caloriesBurned: integer("calories_burned"),
+  avgHeartRate: integer("avg_heart_rate"),
+  effort: text("effort"),
+  location: text("location"),
 
+  status: text("status").notNull().default("completed"),
   isPublic: boolean("is_public").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
