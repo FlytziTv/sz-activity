@@ -25,6 +25,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 async function getActivity(id: string) {
   const result = await db
@@ -54,6 +55,7 @@ async function getActivity(id: string) {
       createdAt: activity.createdAt,
       createdByUserId: activity.createdByUserId,
       creatorName: users.name,
+      creatorId: users.id,
     })
     .from(activity)
     .leftJoin(users, eq(activity.createdByUserId, users.id))
@@ -239,7 +241,12 @@ export default async function ActivityDetailPage({
             value={new Date(item.createdAt).toLocaleDateString("fr-FR")}
           />
           <StatsFiche label="Type" value={item.routeType} />
-          <StatsFiche label="Crée par" value={item.creatorName || "-"} />
+          <StatsFiche
+            label="Crée par"
+            value={item.creatorName || "-"}
+            islink={true}
+            url={item.creatorId ? `/sz-app/profile/${item.creatorId}` : "#"}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4 p-3 w-full ">
@@ -277,14 +284,24 @@ export function ButtonActions({ icon }: { icon: LucideIcon }) {
 export function StatsFiche({
   label,
   value,
+  islink,
+  url,
 }: {
   label: string;
   value?: string;
+  islink?: boolean;
+  url?: string;
 }) {
   return (
     <div className="flex flex-col gap-0 p-4 items-center justify-center bg-[#E8E8E8] rounded-lg">
       <h4 className="text-sm font-semibold text-black">{label}</h4>
-      <p className="text-sm font-normal text-gray-500">{value || "-"}</p>
+      {islink ? (
+        <Link href={url || "#"} className="text-sm font-normal text-gray-500">
+          {value || "-"}
+        </Link>
+      ) : (
+        <p className="text-sm font-normal text-gray-500">{value || "-"}</p>
+      )}
     </div>
   );
 }
