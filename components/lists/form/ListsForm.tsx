@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Asterisk } from "lucide-react";
@@ -25,8 +24,13 @@ import {
 } from "./content/SelectLists";
 import VisibilityLists from "@/components/default/lists/VisibilityLists";
 
-export default function ListsForm() {
-  const [open, setOpen] = useState(false);
+export default function ListsForm({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   const [selectedColor, setSelectedColor] = useState("#D2D2D2");
   const [selectedIcon, setSelectedIcon] = useState("Default");
 
@@ -42,18 +46,15 @@ export default function ListsForm() {
     <Dialog
       open={open}
       onOpenChange={(val) => {
-        setOpen(val);
+        onOpenChange(val);
         if (!val) handleReset();
       }}
     >
-      <DialogTrigger asChild>
-        <Button variant="outline">Ajouter une liste</Button>
-      </DialogTrigger>
       <DialogContent className="max-w-sm">
         <form
           action={async (formData) => {
             await addList(formData);
-            setOpen(false); // Ferme le dialogue après l'ajout
+            onOpenChange(false); // Ferme le dialogue après l'ajout
           }}
         >
           <DialogHeader>

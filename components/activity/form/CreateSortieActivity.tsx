@@ -21,7 +21,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
@@ -30,8 +29,13 @@ import { addUserActivity } from "@/actions/userActivity";
 
 const TOTAL_STEPS = 4;
 
-export default function CreateSortieActivity() {
-  const [open, setOpen] = useState(false);
+export default function CreateSortieActivity({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   const [step, setStep] = useState(1);
 
   // State étape 1
@@ -64,7 +68,7 @@ export default function CreateSortieActivity() {
   const [hike, setHike] = useState("");
 
   const handleClose = () => {
-    setOpen(false);
+    onOpenChange(false);
     setStep(1);
     setTitle("");
     setDescription("");
@@ -121,13 +125,10 @@ export default function CreateSortieActivity() {
     <Dialog
       open={open}
       onOpenChange={(v) => {
-        setOpen(v);
+        onOpenChange(v);
         if (!v) setStep(1);
       }}
     >
-      <DialogTrigger asChild>
-        <Button variant="outline">Ajouter une sortie</Button>
-      </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>Nouvelle sortie</DialogTitle>

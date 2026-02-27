@@ -4,7 +4,6 @@ import { stuff } from "@/lib/schema";
 import { headers } from "next/headers";
 import { eq, desc } from "drizzle-orm";
 import StuffCard from "@/components/stuffs/cards/StuffCard";
-import StuffForm from "@/components/stuffs/form/stuffsForm";
 export const dynamic = "force-dynamic";
 
 async function getStuff() {
@@ -35,7 +34,6 @@ export default async function Stuff() {
           image={item.image ?? ""}
         />
       ))}
-      <StuffForm />
     </div>
   );
 }

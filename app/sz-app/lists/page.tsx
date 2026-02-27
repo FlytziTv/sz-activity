@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserLists } from "@/lib/queries/lists";
 import ListsCard from "@/components/lists/cards/ListsCard";
-import ListsForm from "@/components/lists/form/ListsForm";
 
 export default async function Lists() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -16,7 +15,6 @@ export default async function Lists() {
       {userLists.map((list) => (
         <ListsCard key={list.id} list={list} />
       ))}
-      <ListsForm />
     </div>
   );
 }

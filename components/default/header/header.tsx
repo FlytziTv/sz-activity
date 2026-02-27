@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SZLogo } from "../icons/logo";
 import UserProfile from "./UserProfile";
+import Add from "./add";
 
 const navItems = [
   { text: "Accueil", url: "/sz-app/dash" },
   { text: "Activité", url: "/sz-app/activity" },
-  { text: "Explore", url: "/sz-app/map" },
+  { text: "Explore", url: "/sz-app/explore" },
   { text: "Listes", url: "/sz-app/lists" },
   { text: "Équipement", url: "/sz-app/stuff" },
 ];
@@ -32,7 +33,8 @@ export default function Header({ user }: HeaderProps) {
             <ButtonNav key={item.url} url={item.url} text={item.text} />
           ))}
         </nav>
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end gap-2">
+          <Add />
           <UserProfile user={user} />
         </div>
       </header>

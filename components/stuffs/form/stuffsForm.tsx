@@ -8,29 +8,28 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { Button } from "../../ui/button";
 import { addStuff } from "@/actions/stuff";
-import { useState } from "react";
 import { FormGroup } from "../../default/form/FormGroup";
 import ImgUpload from "../../default/form/content/ImgUpload";
 import SelectStuff from "./content/SelectStuff";
 
-export default function StuffForm() {
-  const [open, setOpen] = useState(false);
-
+export default function StuffForm({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Ajouter un équipement</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <form
           action={async (formData) => {
             await addStuff(formData);
-            setOpen(false); // Ferme le dialogue après l'ajout
+            onOpenChange(false); // Ferme le dialogue après l'ajout
           }}
         >
           <DialogHeader>

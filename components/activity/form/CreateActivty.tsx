@@ -13,7 +13,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import { useState } from "react";
@@ -30,8 +29,13 @@ import { addActivity } from "@/actions/activity";
 
 const TOTAL_STEPS = 5;
 
-export default function CreateActivity() {
-  const [open, setOpen] = useState(false);
+export default function CreateActivity({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   const [step, setStep] = useState(1);
 
   // State étape 1
@@ -95,7 +99,7 @@ export default function CreateActivity() {
   };
 
   const handleClose = () => {
-    setOpen(false);
+    onOpenChange(false);
     setStep(1);
     // State 1
     setTitle("");
@@ -168,13 +172,10 @@ export default function CreateActivity() {
     <Dialog
       open={open}
       onOpenChange={(v) => {
-        setOpen(v);
+        onOpenChange(v);
         if (!v) setStep(1);
       }}
     >
-      <DialogTrigger asChild>
-        <Button variant="outline">Ajouter une activité</Button>
-      </DialogTrigger>
       <DialogContent className="max-w-sm">
         <form>
           <DialogHeader>
