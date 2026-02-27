@@ -154,7 +154,7 @@ export default async function DashPage() {
       {/* Stats */}
       <div className="col-span-1 flex flex-col gap-2 bg-[#E8E8E8] border border-[#DBDBDB] rounded-2xl p-4">
         <h2 className="font-semibold">Quelques statistiques</h2>
-        <div className="grid grid-cols-6 gap-3 ">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 ">
           <StatCard label="Kilomètres" value={`${totalKm} km`} />
           <StatCard label="Dénivelé" value={`${totalElevation} m`} />
           <StatCard label="Heures" value={`${totalHours} h`} />

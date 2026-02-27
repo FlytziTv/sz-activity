@@ -11,7 +11,7 @@ export default async function Explore() {
   const activities = await getActivities();
 
   return (
-    <div className="grid grid-cols-5 gap-2 ">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 ">
       {activities.length === 0 ? (
         <p className="text-gray-500 col-span-5">
           Aucune activité pour l&apos;instant.
