@@ -9,7 +9,7 @@ import Add from "./add";
 const navItems = [
   { text: "Accueil", url: "/sz-app/dash" },
   { text: "Activité", url: "/sz-app/activity" },
-  { text: "Explore", url: "/sz-app/explore" },
+  { text: "Exploration", url: "/sz-app/exploration" },
   { text: "Listes", url: "/sz-app/lists" },
   { text: "Équipement", url: "/sz-app/stuff" },
 ];

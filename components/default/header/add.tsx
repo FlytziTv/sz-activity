@@ -29,12 +29,12 @@ export default function Add() {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Exploration</DropdownMenuLabel>
+          <DropdownMenuLabel>Activités</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => setOpenModal("sortie")}>
-            <Footprints size={14} /> Ajouter une sortie
+            <Footprints size={14} /> Ajouter une activité
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpenModal("activite")}>
-            <Map size={14} /> Ajouter une activité
+            <Map size={14} /> Ajouter une exploration
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
