@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Logo } from "@/public/icons/Logo";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Skeleton } from "../ui/skeleton";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   { name: "Accueil", href: "/" },
@@ -14,6 +17,19 @@ const navItems = [
 ];
 
 export default function NavBar() {
+  const { data: session, isPending } = authClient.useSession();
+
+  // Génère les initiales à partir du nom
+  const getInitials = (name?: string | null) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   const [isScrolled, setIsScrolled] = useState(false);
 
   // effet pour détecter le scroll
@@ -46,11 +62,26 @@ export default function NavBar() {
         <NavItemsMenu />
 
         {/* Bouton de connexion */}
-        <Link href="/login" className="flex items-center justify-end gap-2">
-          <Button className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 cursor-pointer">
-            Connexion
-          </Button>
-        </Link>
+        <div className="flex items-center justify-end gap-2">
+          {isPending ? (
+            <Skeleton className="h-8 w-8 rounded-full" />
+          ) : session?.user ? (
+            <Link href="/profile">
+              <Avatar className="h-8 w-8 cursor-pointer">
+                <AvatarImage src={session.user.image ?? undefined} />
+                <AvatarFallback>
+                  {getInitials(session.user.name)}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
+            <Link href="/sign-in">
+              <Button className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 cursor-pointer">
+                Connexion
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );
