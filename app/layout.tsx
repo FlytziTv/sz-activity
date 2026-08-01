@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import NavBar from "@/components/layout/navbar";
 
 const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -47,6 +48,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NavBar />
           {children}
         </ThemeProvider>
       </body>
