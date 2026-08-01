@@ -22,6 +22,7 @@ import {
 import Image from "next/image";
 
 type Category = { id: string; name: string };
+type Brand = { id: string; name: string };
 type Item = {
   id: string;
   name: string;
@@ -29,14 +30,17 @@ type Item = {
   quantity: number;
   categoryId: string | null;
   imageUrl: string | null;
+  brand: Brand | null;
 };
 
 export function ItemForm({
   categories,
+  brands,
   item,
   onSuccess,
 }: {
   categories: Category[];
+  brands: Brand[];
   item?: Item;
   onSuccess?: () => void;
 }) {
@@ -128,6 +132,23 @@ export function ItemForm({
             <input type="hidden" name="removeImage" value="true" />
           )}
           <Input id="item-image" name="image" type="file" accept="image/*" />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="item-brand">Marque</FieldLabel>
+          <Input
+            id="item-brand"
+            name="brand"
+            list="brand-suggestions"
+            placeholder="MSR"
+            defaultValue={item?.brand?.name}
+            autoComplete="off"
+          />
+          <datalist id="brand-suggestions">
+            {brands.map((brand) => (
+              <option key={brand.id} value={brand.name} />
+            ))}
+          </datalist>
         </Field>
 
         <Field>
