@@ -104,6 +104,8 @@ model Item {
   weight     Int
   quantity   Int        @default(1)
   status     ItemStatus @default(OK)
+  imageUrl   String?
+  imageKey   String?
   userId     String
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId String?
