@@ -13,7 +13,7 @@ const navItems = [
   { name: "Activités", href: "/activites" },
   { name: "Exploration", href: "/exploration" },
   { name: "Liste", href: "/liste" },
-  { name: "Contact", href: "/contact" },
+  { name: "Équipement", href: "/stuff" },
 ];
 
 export default function NavBar() {
