@@ -43,12 +43,14 @@ export default function ItemCard({
           )}
         </div>
 
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 min-w-0 flex-col">
           <div className="flex flex-1 flex-col gap-2">
-            <div className="flex flex-row items-center justify-between">
-              <span className="font-semibold text-xl">{item.name}</span>
+            <div className="flex flex-row items-center justify-between gap-2">
+              <span className="min-w-0 flex-1 truncate font-semibold text-xl">
+                {item.name}
+              </span>
 
-              <div className="flex flex-row gap-1 items-center justify-end">
+              <div className="flex flex-row gap-1 items-center justify-end shrink-0">
                 <EditItemButton
                   item={{
                     id: item.id,
