@@ -6,7 +6,13 @@ import { Button } from "@/components/ui/button";
 import { confirm } from "@/lib/global/alert-dialog-store";
 import { deleteItem } from "@/lib/actions/items";
 
-export function DeleteItemButton({ itemId, itemName }: { itemId: string; itemName: string }) {
+export function DeleteItemButton({
+  itemId,
+  itemName,
+}: {
+  itemId: string;
+  itemName: string;
+}) {
   const [pending, setPending] = useState(false);
 
   async function handleClick() {
@@ -24,7 +30,13 @@ export function DeleteItemButton({ itemId, itemName }: { itemId: string; itemNam
   }
 
   return (
-    <Button type="button" variant="ghost" size="icon" disabled={pending} onClick={handleClick}>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      disabled={pending}
+      onClick={handleClick}
+    >
       <Trash2 />
     </Button>
   );
