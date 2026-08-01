@@ -4,6 +4,7 @@ import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import NavBar from "@/components/layout/navbar";
+import { GlobalDialog } from "@/components/global/global-dialog";
 
 const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -50,6 +51,7 @@ export default function RootLayout({
         >
           <NavBar />
           {children}
+          <GlobalDialog />
         </ThemeProvider>
       </body>
     </html>
