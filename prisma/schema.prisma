@@ -23,6 +23,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   categories    Category[]
+  brands        Brand[]
   items         Item[]
   hikes         Hike[]
 
@@ -98,6 +99,18 @@ model Category {
   @@map("category")
 }
 
+model Brand {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     Item[]
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
+  @@map("brand")
+}
+
 model Item {
   id         String     @id @default(cuid())
   name       String
@@ -110,6 +123,8 @@ model Item {
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId String?
   category   Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brandId    String?
+  brand      Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
   hikeItems  HikeItem[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt

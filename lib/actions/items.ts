@@ -13,6 +13,7 @@ type ParsedItemFields = {
   weight: number;
   quantity: number;
   categoryId: string;
+  brandName: string;
 };
 
 function parseItemFields(formData: FormData): ParsedItemFields | { error: string } {
@@ -21,6 +22,7 @@ function parseItemFields(formData: FormData): ParsedItemFields | { error: string
   const quantity = Number(formData.get("quantity") ?? 1);
   const rawCategoryId = String(formData.get("categoryId") ?? "");
   const categoryId = rawCategoryId === "none" ? "" : rawCategoryId;
+  const brandName = String(formData.get("brand") ?? "").trim();
 
   if (!name) {
     return { error: "Le nom est obligatoire." };
@@ -32,7 +34,7 @@ function parseItemFields(formData: FormData): ParsedItemFields | { error: string
     return { error: "La quantité doit être un entier supérieur ou égal à 1." };
   }
 
-  return { name, weight: Math.round(weight), quantity, categoryId };
+  return { name, weight: Math.round(weight), quantity, categoryId, brandName };
 }
 
 async function validateCategory(categoryId: string, userId: string) {
@@ -42,6 +44,22 @@ async function validateCategory(categoryId: string, userId: string) {
     select: { id: true },
   });
   return category ? null : { error: "Catégorie invalide." };
+}
+
+async function findOrCreateBrand(brandName: string, userId: string) {
+  if (!brandName) return null;
+
+  const existing = await prisma.brand.findFirst({
+    where: { name: brandName, OR: [{ userId: null }, { userId }] },
+    select: { id: true },
+  });
+  if (existing) return existing.id;
+
+  const created = await prisma.brand.create({
+    data: { name: brandName, userId },
+    select: { id: true },
+  });
+  return created.id;
 }
 
 export async function createItem(
@@ -58,6 +76,8 @@ export async function createItem(
 
   const categoryError = await validateCategory(fields.categoryId, session.user.id);
   if (categoryError) return categoryError;
+
+  const brandId = await findOrCreateBrand(fields.brandName, session.user.id);
 
   let imageUrl: string | undefined;
   let imageKey: string | undefined;
@@ -78,6 +98,7 @@ export async function createItem(
       quantity: fields.quantity,
       userId: session.user.id,
       categoryId: fields.categoryId || null,
+      brandId,
       imageUrl,
       imageKey,
     },
@@ -110,6 +131,8 @@ export async function updateItem(
   const categoryError = await validateCategory(fields.categoryId, session.user.id);
   if (categoryError) return categoryError;
 
+  const brandId = await findOrCreateBrand(fields.brandName, session.user.id);
+
   let imageUrl = existingItem.imageUrl;
   let imageKey = existingItem.imageKey;
   const image = formData.get("image");
@@ -138,6 +161,7 @@ export async function updateItem(
       weight: fields.weight,
       quantity: fields.quantity,
       categoryId: fields.categoryId || null,
+      brandId,
       imageUrl,
       imageKey,
     },
