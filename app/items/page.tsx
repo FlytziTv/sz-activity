@@ -79,7 +79,15 @@ export default async function ItemsPage({
               {items.length} item{items.length > 1 ? "s" : ""}
             </p>
           </div>
-          <NewItemButton categories={categories} brands={brands} />
+          <div className="flex items-center gap-2">
+            <Link
+              href="/items/manage"
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
+              Gérer catégories & marques
+            </Link>
+            <NewItemButton categories={categories} brands={brands} />
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
