@@ -135,20 +135,22 @@ export function ItemForm({
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="item-brand">Marque</FieldLabel>
-          <Input
-            id="item-brand"
-            name="brand"
-            list="brand-suggestions"
-            placeholder="MSR"
-            defaultValue={item?.brand?.name}
-            autoComplete="off"
-          />
-          <datalist id="brand-suggestions">
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.name} />
-            ))}
-          </datalist>
+          <FieldLabel htmlFor="item-brandId">Marque</FieldLabel>
+          <Select name="brandId" defaultValue={item?.brand?.id ?? "none"}>
+            <SelectTrigger id="item-brandId" className="w-full">
+              <SelectValue placeholder="Choisir une marque" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="none">Aucune marque</SelectItem>
+                {brands.map((brand) => (
+                  <SelectItem key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </Field>
 
         <Field>
