@@ -140,7 +140,7 @@ export function HikeItemPicker({
           </Link>
         </p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <div className="grid grid-cols-7 gap-2">
           {items.map((item) => (
             <ItemSelectCard
               key={item.id}
@@ -150,7 +150,7 @@ export function HikeItemPicker({
               setQuantity={setQuantity}
             />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
