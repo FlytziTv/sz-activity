@@ -33,7 +33,7 @@ export default async function ManageItemsPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6 bg-border py-16 px-8 min-h-screen">
+    <div className="flex flex-col gap-6 bg-border/20 py-16 px-8 min-h-screen">
       <div className="flex flex-col gap-0">
         <h2 className="text-xl font-semibold">Catégories & marques</h2>
         <p className="text-sm text-muted-foreground">
