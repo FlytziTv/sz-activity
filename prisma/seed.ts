@@ -18,6 +18,21 @@ const DEFAULT_CATEGORIES = [
   "Divers",
 ];
 
+const DEFAULT_BRANDS = [
+  "Decathlon",
+  "Salomon",
+  "Millet",
+  "Lafuma",
+  "The North Face",
+  "Patagonia",
+  "Osprey",
+  "MSR",
+  "Black Diamond",
+  "Columbia",
+  "Vaude",
+  "Mammut",
+];
+
 async function main() {
   for (const name of DEFAULT_CATEGORIES) {
     const existing = await prisma.category.findFirst({
@@ -28,6 +43,16 @@ async function main() {
     }
   }
   console.log(`Seeded ${DEFAULT_CATEGORIES.length} default categories.`);
+
+  for (const name of DEFAULT_BRANDS) {
+    const existing = await prisma.brand.findFirst({
+      where: { userId: null, name },
+    });
+    if (!existing) {
+      await prisma.brand.create({ data: { name } });
+    }
+  }
+  console.log(`Seeded ${DEFAULT_BRANDS.length} default brands.`);
 }
 
 main()
