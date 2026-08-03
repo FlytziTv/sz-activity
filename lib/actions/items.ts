@@ -18,7 +18,9 @@ type ParsedItemFields = {
   waterCapacityLiters: number | null;
 };
 
-function parseItemFields(formData: FormData): ParsedItemFields | { error: string } {
+function parseItemFields(
+  formData: FormData,
+): ParsedItemFields | { error: string } {
   const name = String(formData.get("name") ?? "").trim();
   const weight = Number(formData.get("weight"));
   const quantity = Number(formData.get("quantity") ?? 1);
@@ -26,8 +28,12 @@ function parseItemFields(formData: FormData): ParsedItemFields | { error: string
   const categoryId = rawCategoryId === "none" ? "" : rawCategoryId;
   const rawBrandId = String(formData.get("brandId") ?? "");
   const brandId = rawBrandId === "none" ? "" : rawBrandId;
-  const rawWaterCapacity = String(formData.get("waterCapacityLiters") ?? "").trim();
-  const waterCapacityLiters = rawWaterCapacity ? Number(rawWaterCapacity) : null;
+  const rawWaterCapacity = String(
+    formData.get("waterCapacityLiters") ?? "",
+  ).trim();
+  const waterCapacityLiters = rawWaterCapacity
+    ? Number(rawWaterCapacity)
+    : null;
 
   if (!name) {
     return { error: "Le nom est obligatoire." };
@@ -38,24 +44,39 @@ function parseItemFields(formData: FormData): ParsedItemFields | { error: string
   if (!Number.isInteger(quantity) || quantity < 1) {
     return { error: "La quantité doit être un entier supérieur ou égal à 1." };
   }
-  if (waterCapacityLiters !== null && (!Number.isFinite(waterCapacityLiters) || waterCapacityLiters < 0)) {
+  if (
+    waterCapacityLiters !== null &&
+    (!Number.isFinite(waterCapacityLiters) || waterCapacityLiters < 0)
+  ) {
     return { error: "La contenance en eau doit être un nombre positif." };
   }
 
-  return { name, weight: Math.round(weight), quantity, categoryId, brandId, waterCapacityLiters };
+  return {
+    name,
+    weight: Math.round(weight),
+    quantity,
+    categoryId,
+    brandId,
+    waterCapacityLiters,
+  };
 }
 
 type CategoryResult =
   | { ok: true; category: { id: string; name: string } | null }
   | { ok: false; error: string };
 
-async function validateCategory(categoryId: string, userId: string): Promise<CategoryResult> {
+async function validateCategory(
+  categoryId: string,
+  userId: string,
+): Promise<CategoryResult> {
   if (!categoryId) return { ok: true, category: null };
   const category = await prisma.category.findFirst({
     where: { id: categoryId, OR: [{ userId: null }, { userId }] },
     select: { id: true, name: true },
   });
-  return category ? { ok: true, category } : { ok: false, error: "Catégorie invalide." };
+  return category
+    ? { ok: true, category }
+    : { ok: false, error: "Catégorie invalide." };
 }
 
 async function validateBrand(brandId: string, userId: string) {
@@ -69,7 +90,7 @@ async function validateBrand(brandId: string, userId: string) {
 
 export async function createItem(
   _prevState: CreateItemState,
-  formData: FormData
+  formData: FormData,
 ): Promise<CreateItemState> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
@@ -79,7 +100,10 @@ export async function createItem(
   const fields = parseItemFields(formData);
   if ("error" in fields) return fields;
 
-  const categoryResult = await validateCategory(fields.categoryId, session.user.id);
+  const categoryResult = await validateCategory(
+    fields.categoryId,
+    session.user.id,
+  );
   if (!categoryResult.ok) return { error: categoryResult.error };
 
   const brandError = await validateBrand(fields.brandId, session.user.id);
@@ -120,7 +144,7 @@ export async function createItem(
 export async function updateItem(
   itemId: string,
   _prevState: CreateItemState,
-  formData: FormData
+  formData: FormData,
 ): Promise<CreateItemState> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
@@ -137,7 +161,10 @@ export async function updateItem(
   const fields = parseItemFields(formData);
   if ("error" in fields) return fields;
 
-  const categoryResult = await validateCategory(fields.categoryId, session.user.id);
+  const categoryResult = await validateCategory(
+    fields.categoryId,
+    session.user.id,
+  );
   if (!categoryResult.ok) return { error: categoryResult.error };
 
   const brandError = await validateBrand(fields.brandId, session.user.id);

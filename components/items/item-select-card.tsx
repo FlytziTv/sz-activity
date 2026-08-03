@@ -8,17 +8,19 @@ import Image from "next/image";
 import { ImageOff } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
+import { getEffectiveWeight } from "@/lib/item-weight";
 
 export type Item = {
   id: string;
   name: string;
   imageUrl: string | null;
-  weight: number;
+  weight: number | null;
   quantity: number;
   status: string;
   category?: {
     name: string;
   } | null;
+  waterCapacityLiters?: number | null;
 };
 
 interface ItemSelectCardProps {
@@ -75,7 +77,9 @@ export default function ItemSelectCard({
           <div className="flex flex-1 min-w-0 flex-col cursor-pointer select-none">
             <span className="truncate text-base font-medium">{item.name}</span>
             <span className="text-sm text-muted-foreground">
-              {item.category?.name ?? "Sans catégorie"} · {item.weight} g
+              {item.category?.name ?? "Sans catégorie"} ·{" "}
+              {item.waterCapacityLiters != null &&
+                ` (${item.weight} g + ${item.waterCapacityLiters} L)`}
             </span>
           </div>
 

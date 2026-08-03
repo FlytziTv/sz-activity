@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getEffectiveWeight } from "@/lib/item-weight";
 
 export type CreateHikeState = { error: string } | { hikeId: string };
 
@@ -78,7 +79,13 @@ export async function updateHikeItems(
 
   const items = await prisma.item.findMany({
     where: { id: { in: itemIds } },
-    select: { id: true, name: true, weight: true, quantity: true },
+    select: {
+      id: true,
+      name: true,
+      weight: true,
+      quantity: true,
+      waterCapacityLiters: true,
+    },
   });
   const itemsById = new Map(items.map((i) => [i.id, i]));
 
@@ -94,10 +101,10 @@ export async function updateHikeItems(
     }
   }
 
-  const plannedWeight = selections.reduce(
-    (total, s) => total + (itemsById.get(s.itemId)?.weight ?? 0) * s.quantity,
-    0,
-  );
+  const plannedWeight = selections.reduce((total, s) => {
+    const item = itemsById.get(s.itemId);
+    return total + (item ? getEffectiveWeight(item) * s.quantity : 0);
+  }, 0);
 
   await prisma.$transaction([
     prisma.hikeItem.deleteMany({

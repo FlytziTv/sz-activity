@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ItemSelectCard, { type Item } from "../items/item-select-card";
 import Link from "next/link";
 import { ITEM_HIKE_STATUS_LABELS } from "@/lib/labels";
+import { getEffectiveWeight } from "@/lib/item-weight";
 
 interface HikeItemPickerProps {
   hikeId: string;
@@ -31,7 +32,12 @@ export function HikeItemPicker({
     () =>
       items.reduce((total, item) => {
         const qty = selection[item.id];
-        return qty ? total + item.weight * qty : total;
+        if (!qty) return total;
+        const effectiveWeight = getEffectiveWeight({
+          weight: item.weight,
+          waterCapacityLiters: item.waterCapacityLiters ?? null,
+        });
+        return total + effectiveWeight * qty;
       }, 0),
     [items, selection],
   );
