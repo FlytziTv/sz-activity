@@ -14,6 +14,7 @@ export type Item = {
   name: string;
   imageUrl: string | null;
   weight: number;
+  quantity: number;
   status: string;
   category?: {
     name: string;
@@ -64,6 +65,10 @@ export default function ItemSelectCard({
               {ITEM_HIKE_STATUS_LABELS[item.status] ?? item.status}
             </Badge>
           )}
+
+          <Badge className="absolute top-2 left-2 text-xs">
+            {item.quantity}
+          </Badge>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -88,11 +93,13 @@ export default function ItemSelectCard({
               <Input
                 type="number"
                 min={1}
+                max={item.quantity}
                 step={1}
                 value={selection[item.id] ?? 1}
                 onChange={(e) => {
                   const val = parseInt(e.target.value, 10);
-                  setQuantity(item.id, isNaN(val) || val < 1 ? 1 : val);
+                  const clamped = isNaN(val) || val < 1 ? 1 : val;
+                  setQuantity(item.id, Math.min(clamped, item.quantity));
                 }}
                 className="w-15"
                 aria-label={`Quantité pour ${item.name}`}
