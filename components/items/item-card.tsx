@@ -20,6 +20,7 @@ export default function ItemCard({
     category: { id: string; name: string } | null;
     imageUrl: string | null;
     status: string;
+    waterCapacityLiters: number | null;
   };
   categories: { id: string; name: string }[];
   brands: { id: string; name: string }[];
@@ -60,6 +61,7 @@ export default function ItemCard({
                     categoryId: item.categoryId,
                     imageUrl: item.imageUrl,
                     brand: item.brand,
+                    waterCapacityLiters: item.waterCapacityLiters,
                   }}
                   categories={categories}
                   brands={brands}
@@ -82,6 +84,12 @@ export default function ItemCard({
 
               <div className="flex flex-row gap-6 items-start flex-wrap">
                 <KeyValue label="Poids" value={`${item.weight} g`} />
+                {item.waterCapacityLiters != null && (
+                  <KeyValue
+                    label="Litrage"
+                    value={`${item.waterCapacityLiters} L`}
+                  />
+                )}
                 <KeyValue label="Quantité" value={item.quantity} />
               </div>
 

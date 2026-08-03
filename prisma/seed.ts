@@ -15,6 +15,7 @@ const DEFAULT_CATEGORIES = [
   "Vêtements",
   "Hygiène",
   "Navigation & Sécurité",
+  "Hydratation",
   "Divers",
 ];
 

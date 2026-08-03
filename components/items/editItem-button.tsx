@@ -15,6 +15,7 @@ type Item = {
   categoryId: string | null;
   imageUrl: string | null;
   brand: Brand | null;
+  waterCapacityLiters: number | null;
 };
 
 export function EditItemButton({

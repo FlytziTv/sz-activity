@@ -9,7 +9,7 @@ export type CreateHikeState = { error: string } | { hikeId: string };
 
 export async function createHike(
   _prevState: CreateHikeState | null,
-  formData: FormData
+  formData: FormData,
 ): Promise<CreateHikeState> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
@@ -54,7 +54,7 @@ export type UpdateHikeItemsState = { error: string } | { success: true };
 
 export async function updateHikeItems(
   hikeId: string,
-  selections: { itemId: string; quantity: number }[]
+  selections: { itemId: string; quantity: number }[],
 ): Promise<UpdateHikeItemsState> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
@@ -78,12 +78,25 @@ export async function updateHikeItems(
 
   const items = await prisma.item.findMany({
     where: { id: { in: itemIds } },
-    select: { id: true, weight: true },
+    select: { id: true, name: true, weight: true, quantity: true },
   });
-  const weightByItemId = new Map(items.map((i) => [i.id, i.weight]));
+  const itemsById = new Map(items.map((i) => [i.id, i]));
+
+  for (const selection of selections) {
+    if (!Number.isInteger(selection.quantity) || selection.quantity < 1) {
+      return { error: "Quantité invalide." };
+    }
+    const item = itemsById.get(selection.itemId);
+    if (item && selection.quantity > item.quantity) {
+      return {
+        error: `Tu n'as que ${item.quantity} "${item.name}" en stock (tu en as sélectionné ${selection.quantity}).`,
+      };
+    }
+  }
+
   const plannedWeight = selections.reduce(
-    (total, s) => total + (weightByItemId.get(s.itemId) ?? 0) * s.quantity,
-    0
+    (total, s) => total + (itemsById.get(s.itemId)?.weight ?? 0) * s.quantity,
+    0,
   );
 
   await prisma.$transaction([
@@ -100,7 +113,7 @@ export async function updateHikeItems(
           quantity: s.quantity,
           planned: true,
         },
-      })
+      }),
     ),
     prisma.hike.update({
       where: { id: hikeId },

@@ -112,22 +112,24 @@ model Brand {
 }
 
 model Item {
-  id         String     @id @default(cuid())
-  name       String
-  weight     Int
-  quantity   Int        @default(1)
-  status     ItemStatus @default(OK)
-  imageUrl   String?
-  imageKey   String?
-  userId     String
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  categoryId String?
-  category   Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  brandId    String?
-  brand      Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
-  hikeItems  HikeItem[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id                  String     @id @default(cuid())
+  name                String
+  weight              Int?
+  wornOnBody          Boolean    @default(false)
+  quantity            Int        @default(1)
+  status              ItemStatus @default(OK)
+  waterCapacityLiters Float?
+  imageUrl            String?
+  imageKey            String?
+  userId              String
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId          String?
+  category            Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brandId             String?
+  brand               Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  hikeItems           HikeItem[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 
   @@index([userId])
   @@map("item")

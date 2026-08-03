@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteItemImage, uploadItemImage } from "@/lib/uploadthing";
+import { HYDRATION_CATEGORY_NAME } from "@/lib/item-weight";
 
 export type CreateItemState = { error: string } | null;
 
@@ -14,6 +15,7 @@ type ParsedItemFields = {
   quantity: number;
   categoryId: string;
   brandId: string;
+  waterCapacityLiters: number | null;
 };
 
 function parseItemFields(formData: FormData): ParsedItemFields | { error: string } {
@@ -24,6 +26,8 @@ function parseItemFields(formData: FormData): ParsedItemFields | { error: string
   const categoryId = rawCategoryId === "none" ? "" : rawCategoryId;
   const rawBrandId = String(formData.get("brandId") ?? "");
   const brandId = rawBrandId === "none" ? "" : rawBrandId;
+  const rawWaterCapacity = String(formData.get("waterCapacityLiters") ?? "").trim();
+  const waterCapacityLiters = rawWaterCapacity ? Number(rawWaterCapacity) : null;
 
   if (!name) {
     return { error: "Le nom est obligatoire." };
@@ -34,17 +38,24 @@ function parseItemFields(formData: FormData): ParsedItemFields | { error: string
   if (!Number.isInteger(quantity) || quantity < 1) {
     return { error: "La quantité doit être un entier supérieur ou égal à 1." };
   }
+  if (waterCapacityLiters !== null && (!Number.isFinite(waterCapacityLiters) || waterCapacityLiters < 0)) {
+    return { error: "La contenance en eau doit être un nombre positif." };
+  }
 
-  return { name, weight: Math.round(weight), quantity, categoryId, brandId };
+  return { name, weight: Math.round(weight), quantity, categoryId, brandId, waterCapacityLiters };
 }
 
-async function validateCategory(categoryId: string, userId: string) {
-  if (!categoryId) return null;
+type CategoryResult =
+  | { ok: true; category: { id: string; name: string } | null }
+  | { ok: false; error: string };
+
+async function validateCategory(categoryId: string, userId: string): Promise<CategoryResult> {
+  if (!categoryId) return { ok: true, category: null };
   const category = await prisma.category.findFirst({
     where: { id: categoryId, OR: [{ userId: null }, { userId }] },
-    select: { id: true },
+    select: { id: true, name: true },
   });
-  return category ? null : { error: "Catégorie invalide." };
+  return category ? { ok: true, category } : { ok: false, error: "Catégorie invalide." };
 }
 
 async function validateBrand(brandId: string, userId: string) {
@@ -68,11 +79,13 @@ export async function createItem(
   const fields = parseItemFields(formData);
   if ("error" in fields) return fields;
 
-  const categoryError = await validateCategory(fields.categoryId, session.user.id);
-  if (categoryError) return categoryError;
+  const categoryResult = await validateCategory(fields.categoryId, session.user.id);
+  if (!categoryResult.ok) return { error: categoryResult.error };
 
   const brandError = await validateBrand(fields.brandId, session.user.id);
   if (brandError) return brandError;
+
+  const isHydration = categoryResult.category?.name === HYDRATION_CATEGORY_NAME;
 
   let imageUrl: string | undefined;
   let imageKey: string | undefined;
@@ -94,6 +107,7 @@ export async function createItem(
       userId: session.user.id,
       categoryId: fields.categoryId || null,
       brandId: fields.brandId || null,
+      waterCapacityLiters: isHydration ? fields.waterCapacityLiters : null,
       imageUrl,
       imageKey,
     },
@@ -123,11 +137,13 @@ export async function updateItem(
   const fields = parseItemFields(formData);
   if ("error" in fields) return fields;
 
-  const categoryError = await validateCategory(fields.categoryId, session.user.id);
-  if (categoryError) return categoryError;
+  const categoryResult = await validateCategory(fields.categoryId, session.user.id);
+  if (!categoryResult.ok) return { error: categoryResult.error };
 
   const brandError = await validateBrand(fields.brandId, session.user.id);
   if (brandError) return brandError;
+
+  const isHydration = categoryResult.category?.name === HYDRATION_CATEGORY_NAME;
 
   let imageUrl = existingItem.imageUrl;
   let imageKey = existingItem.imageKey;
@@ -158,6 +174,7 @@ export async function updateItem(
       quantity: fields.quantity,
       categoryId: fields.categoryId || null,
       brandId: fields.brandId || null,
+      waterCapacityLiters: isHydration ? fields.waterCapacityLiters : null,
       imageUrl,
       imageKey,
     },

@@ -20,6 +20,7 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { HYDRATION_CATEGORY_NAME } from "@/lib/item-weight";
 
 type Category = { id: string; name: string };
 type Brand = { id: string; name: string };
@@ -31,6 +32,7 @@ type Item = {
   categoryId: string | null;
   imageUrl: string | null;
   brand: Brand | null;
+  waterCapacityLiters: number | null;
 };
 
 export function ItemForm({
@@ -48,6 +50,11 @@ export function ItemForm({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [removeImage, setRemoveImage] = useState(false);
+  const [categoryId, setCategoryId] = useState(item?.categoryId ?? "none");
+
+  const isHydration = categories.some(
+    (category) => category.id === categoryId && category.name === HYDRATION_CATEGORY_NAME
+  );
 
   async function handleSubmit(formData: FormData) {
     setPending(true);
@@ -155,7 +162,7 @@ export function ItemForm({
 
         <Field>
           <FieldLabel htmlFor="item-categoryId">Catégorie</FieldLabel>
-          <Select name="categoryId" defaultValue={item?.categoryId ?? "none"}>
+          <Select name="categoryId" value={categoryId} onValueChange={setCategoryId}>
             <SelectTrigger id="item-categoryId" className="w-full">
               <SelectValue placeholder="Choisir une catégorie" />
             </SelectTrigger>
@@ -171,6 +178,23 @@ export function ItemForm({
             </SelectContent>
           </Select>
         </Field>
+
+        {isHydration && (
+          <Field>
+            <FieldLabel htmlFor="item-waterCapacityLiters">
+              Contenance en eau (L)
+            </FieldLabel>
+            <Input
+              id="item-waterCapacityLiters"
+              name="waterCapacityLiters"
+              type="number"
+              placeholder="3"
+              min={0}
+              step={0.1}
+              defaultValue={item?.waterCapacityLiters ?? undefined}
+            />
+          </Field>
+        )}
 
         {error && <FieldError>{error}</FieldError>}
 
