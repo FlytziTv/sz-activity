@@ -27,7 +27,7 @@ type Brand = { id: string; name: string };
 type Item = {
   id: string;
   name: string;
-  weight: number;
+  weight: number | null;
   quantity: number;
   categoryId: string | null;
   imageUrl: string | null;
@@ -53,7 +53,8 @@ export function ItemForm({
   const [categoryId, setCategoryId] = useState(item?.categoryId ?? "none");
 
   const isHydration = categories.some(
-    (category) => category.id === categoryId && category.name === HYDRATION_CATEGORY_NAME
+    (category) =>
+      category.id === categoryId && category.name === HYDRATION_CATEGORY_NAME,
   );
 
   async function handleSubmit(formData: FormData) {
@@ -94,8 +95,7 @@ export function ItemForm({
               placeholder="500"
               min={0}
               step={1}
-              defaultValue={item?.weight}
-              required
+              defaultValue={item?.weight ?? undefined}
             />
           </Field>
           <Field>
@@ -162,7 +162,11 @@ export function ItemForm({
 
         <Field>
           <FieldLabel htmlFor="item-categoryId">Catégorie</FieldLabel>
-          <Select name="categoryId" value={categoryId} onValueChange={setCategoryId}>
+          <Select
+            name="categoryId"
+            value={categoryId}
+            onValueChange={setCategoryId}
+          >
             <SelectTrigger id="item-categoryId" className="w-full">
               <SelectValue placeholder="Choisir une catégorie" />
             </SelectTrigger>

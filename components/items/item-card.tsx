@@ -13,7 +13,7 @@ export default function ItemCard({
   item: {
     id: string;
     name: string;
-    weight: number;
+    weight: number | null;
     quantity: number;
     categoryId: string | null;
     brand: { id: string; name: string } | null;
@@ -83,7 +83,9 @@ export default function ItemCard({
               </div>
 
               <div className="flex flex-row gap-6 items-start flex-wrap">
-                <KeyValue label="Poids" value={`${item.weight} g`} />
+                {item.weight != 0 && (
+                  <KeyValue label="Poids" value={`${item.weight} g`} />
+                )}
                 {item.waterCapacityLiters != null && (
                   <KeyValue
                     label="Litrage"
