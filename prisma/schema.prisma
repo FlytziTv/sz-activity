@@ -115,7 +115,6 @@ model Item {
   id                  String     @id @default(cuid())
   name                String
   weight              Int?
-  wornOnBody          Boolean    @default(false)
   quantity            Int        @default(1)
   status              ItemStatus @default(OK)
   waterCapacityLiters Float?
