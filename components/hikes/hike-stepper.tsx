@@ -2,21 +2,12 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-export type HikeStepKey = "selection" | "preparation" | "en-rando" | "bilan";
-
-const STEPS: { key: HikeStepKey; label: string }[] = [
-  { key: "selection", label: "Sélection" },
-  { key: "preparation", label: "Préparation" },
-  { key: "en-rando", label: "En rando" },
-  { key: "bilan", label: "Bilan" },
-];
+import { HikeStepKey, LABEL_STEPS } from "@/lib/stepper-hike";
 
 export function HikeStepper({
   hikeId,
@@ -35,7 +26,7 @@ export function HikeStepper({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-4 gap-4">
-          {STEPS.map((step, index) => {
+          {LABEL_STEPS.map((step, index) => {
             const isActive = step.key === currentStep;
             const isDone = index < completedSteps;
             return (
