@@ -30,7 +30,7 @@ interface ItemSelectCardProps {
   setQuantity: (itemId: string, quantity: number) => void;
 }
 
-export default function ItemSelectCard({
+export function ItemSelectCard({
   item,
   selection,
   toggle,

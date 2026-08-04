@@ -5,7 +5,7 @@ import { TriangleAlert } from "lucide-react";
 import { updateHikeItems } from "@/lib/actions/hikes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import ItemSelectCard, { type Item } from "../items/item-select-card";
+import { ItemSelectCard, type Item } from "../items/item-select-card";
 import Link from "next/link";
 import { ITEM_HIKE_STATUS_LABELS } from "@/lib/labels";
 import { getEffectiveWeight } from "@/lib/item-weight";
