@@ -78,8 +78,13 @@ export default function ItemSelectCard({
             <span className="truncate text-base font-medium">{item.name}</span>
             <span className="text-sm text-muted-foreground">
               {item.category?.name ?? "Sans catégorie"} ·{" "}
+              {getEffectiveWeight({
+                weight: item.weight,
+                waterCapacityLiters: item.waterCapacityLiters ?? null,
+              })}{" "}
+              g
               {item.waterCapacityLiters != null &&
-                ` (${item.weight} g + ${item.waterCapacityLiters} L)`}
+                ` (${item.weight ?? 0} g + ${item.waterCapacityLiters} L)`}
             </span>
           </div>
 
