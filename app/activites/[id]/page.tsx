@@ -32,7 +32,10 @@ export default async function HikeDetailPage({
   const hike = await prisma.hike.findFirst({
     where: { id, userId: session.user.id },
     include: {
-      items: { include: { item: true }, orderBy: { item: { name: "asc" } } },
+      items: {
+        include: { item: { include: { category: true } } },
+        orderBy: { item: { name: "asc" } },
+      },
     },
   });
   if (!hike) {

@@ -120,3 +120,93 @@ export function ItemSelectCard({
     </Card>
   );
 }
+
+export type ConfirmItem = {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+  weight: number | null;
+  status: string;
+  category?: {
+    name: string;
+  } | null;
+  waterCapacityLiters?: number | null;
+};
+
+interface ItemConfirmCardProps {
+  item: ConfirmItem;
+  quantity: number;
+  confirmed: boolean;
+  disabled: boolean;
+  onToggle: (confirmed: boolean) => void;
+}
+
+export function ItemConfirmCard({
+  item,
+  quantity,
+  confirmed,
+  disabled,
+  onToggle,
+}: ItemConfirmCardProps) {
+  return (
+    <Card
+      size="sm"
+      className={cn("transition-colors", confirmed ? "ring-black/50" : "")}
+    >
+      <CardContent className="flex flex-col gap-3 px-3">
+        <div className="relative overflow-hidden rounded-md w-full aspect-[4/3] bg-muted">
+          {item.imageUrl ? (
+            <Image
+              src={item.imageUrl}
+              alt={item.name}
+              fill
+              sizes="160px"
+              className="rounded-md object-cover"
+            />
+          ) : (
+            <div className="flex w-full aspect-[4/3] items-center justify-center rounded-md">
+              <ImageOff className="size-8 text-muted-foreground" />
+            </div>
+          )}
+
+          {item.status !== "OK" && (
+            <Badge
+              variant="destructive"
+              className="absolute bottom-2 right-2 text-xs"
+            >
+              {ITEM_HIKE_STATUS_LABELS[item.status] ?? item.status}
+            </Badge>
+          )}
+
+          <Badge className="absolute top-2 left-2 text-xs">{quantity}</Badge>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-1 min-w-0 flex-col cursor-pointer select-none">
+            <span className="truncate text-base font-medium">{item.name}</span>
+            <span className="text-sm text-muted-foreground">
+              {item.category?.name ?? "Sans catégorie"} ·{" "}
+              {getEffectiveWeight({
+                weight: item.weight,
+                waterCapacityLiters: item.waterCapacityLiters ?? null,
+              })}{" "}
+              g
+              {item.waterCapacityLiters != null &&
+                ` (${item.weight ?? 0} g + ${item.waterCapacityLiters} L)`}
+            </span>
+          </div>
+
+          <div className="h-8 w-fit min-w-0 rounded-lg border border-input bg-transparent flex items-center px-2.5 py-1">
+            <Checkbox
+              id={`confirm-${item.id}`}
+              checked={confirmed}
+              disabled={disabled}
+              onCheckedChange={(checked) => onToggle(checked === true)}
+              className="size-4 rounded border-gray-300 accent-primary cursor-pointer"
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

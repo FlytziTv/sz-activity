@@ -134,3 +134,53 @@ export async function updateHikeItems(
   revalidatePath(`/activites/${hikeId}`);
   return { success: true };
 }
+
+export async function toggleHikeItemConfirmed(hikeItemId: string, confirmed: boolean) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    throw new Error("Tu dois être connecté.");
+  }
+
+  const hikeItem = await prisma.hikeItem.findFirst({
+    where: { id: hikeItemId, hike: { userId: session.user.id } },
+    select: { hikeId: true },
+  });
+  if (!hikeItem) {
+    throw new Error("Item de rando introuvable.");
+  }
+
+  await prisma.hikeItem.update({
+    where: { id: hikeItemId },
+    data: { confirmed },
+  });
+
+  revalidatePath(`/activites/${hikeItem.hikeId}`);
+}
+
+export type StartHikeState = { error: string } | { success: true };
+
+export async function startHike(hikeId: string): Promise<StartHikeState> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "Tu dois être connecté." };
+  }
+
+  const hike = await prisma.hike.findFirst({
+    where: { id: hikeId, userId: session.user.id },
+  });
+  if (!hike) {
+    return { error: "Rando introuvable." };
+  }
+  if (hike.status !== "PREPARING") {
+    return { error: "Cette rando n'est pas en préparation." };
+  }
+
+  await prisma.hike.update({
+    where: { id: hikeId },
+    data: { status: "IN_PROGRESS" },
+  });
+
+  revalidatePath(`/activites/${hikeId}`);
+  revalidatePath("/activites");
+  return { success: true };
+}
