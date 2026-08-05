@@ -10,3 +10,10 @@ export const HIKE_STATUS_LABELS: Record<string, string> = {
   IN_PROGRESS: "En cours",
   COMPLETED: "Terminée",
 };
+
+export const HIKE_ITEM_STATUS_AFTER_LABELS: Record<string, string> = {
+  OK: "OK",
+  LOST: "Perdu",
+  DAMAGED: "Abîmé",
+  CONSUMED: "Consommé",
+};
