@@ -337,3 +337,90 @@ export async function deleteStatusSplit(splitId: string) {
 
   revalidatePath(`/activites/${split.hikeItem.hikeId}`);
 }
+
+export type SubmitHikeBilanState = { error: string } | { success: true };
+
+function parseOptionalFloat(formData: FormData, key: string): number | null {
+  const raw = String(formData.get(key) ?? "").trim();
+  if (!raw) return null;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : null;
+}
+
+export async function submitHikeBilan(
+  hikeId: string,
+  _prevState: SubmitHikeBilanState | null,
+  formData: FormData,
+): Promise<SubmitHikeBilanState> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "Tu dois être connecté." };
+  }
+
+  const hike = await prisma.hike.findFirst({
+    where: { id: hikeId, userId: session.user.id },
+    include: { items: { include: { statusSplits: true, item: true } } },
+  });
+  if (!hike) {
+    return { error: "Rando introuvable." };
+  }
+  if (hike.status !== "COMPLETED") {
+    return { error: "Cette rando n'est pas terminée." };
+  }
+  if (hike.actualDistance !== null || hike.actualDuration !== null || hike.actualElevation !== null) {
+    return { error: "Le bilan a déjà été validé." };
+  }
+
+  const actualDistance = parseOptionalFloat(formData, "actualDistance");
+  const actualDurationRaw = parseOptionalFloat(formData, "actualDuration");
+  const actualElevationRaw = parseOptionalFloat(formData, "actualElevation");
+  const actualDuration =
+    actualDurationRaw !== null ? Math.round(actualDurationRaw) : null;
+  const actualElevation =
+    actualElevationRaw !== null ? Math.round(actualElevationRaw) : null;
+
+  const itemUpdates = hike.items.flatMap((hikeItem) => {
+    const lost = hikeItem.statusSplits
+      .filter((s) => s.status === "LOST")
+      .reduce((t, s) => t + s.quantity, 0);
+    const consumed = hikeItem.statusSplits
+      .filter((s) => s.status === "CONSUMED")
+      .reduce((t, s) => t + s.quantity, 0);
+    const damaged = hikeItem.statusSplits
+      .filter((s) => s.status === "DAMAGED")
+      .reduce((t, s) => t + s.quantity, 0);
+
+    if (lost === 0 && consumed === 0 && damaged === 0) {
+      return [];
+    }
+
+    const newQuantity = Math.max(0, hikeItem.item.quantity - lost - consumed);
+    return [
+      {
+        itemId: hikeItem.itemId,
+        quantity: newQuantity,
+        status: damaged > 0 ? ("DAMAGED" as const) : undefined,
+      },
+    ];
+  });
+
+  await prisma.$transaction([
+    prisma.hike.update({
+      where: { id: hikeId },
+      data: { actualDistance, actualDuration, actualElevation },
+    }),
+    ...itemUpdates.map((update) =>
+      prisma.item.update({
+        where: { id: update.itemId },
+        data: {
+          quantity: update.quantity,
+          ...(update.status ? { status: update.status } : {}),
+        },
+      }),
+    ),
+  ]);
+
+  revalidatePath(`/activites/${hikeId}`);
+  revalidatePath("/items");
+  return { success: true };
+}
