@@ -34,7 +34,10 @@ export default async function HikeDetailPage({
     where: { id, userId: session.user.id },
     include: {
       items: {
-        include: { item: { include: { category: true } } },
+        include: {
+          item: { include: { category: true } },
+          statusSplits: { orderBy: { createdAt: "asc" } },
+        },
         orderBy: { item: { name: "asc" } },
       },
       checkPoints: { orderBy: { createdAt: "asc" } },

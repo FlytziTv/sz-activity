@@ -36,8 +36,9 @@ type CheckPoint = {
 
 export type ReviewHikeItem = {
   id: string;
-  statusAfter: string | null;
+  quantity: number;
   item: { name: string };
+  statusSplits: { id: string; status: string; quantity: number }[];
 };
 
 export function HikeCheckpoints({
@@ -62,6 +63,23 @@ export function HikeCheckpoints({
   const [completeError, setCompleteError] = useState<string | null>(null);
 
   const canEdit = hikeStatus === "IN_PROGRESS";
+
+  const matosCard = hikeItems.length > 0 && (
+    <Card>
+      <CardHeader>
+        <CardTitle>État du matos</CardTitle>
+      </CardHeader>
+      <CardContent className="grid grid-cols-4 gap-4">
+        {hikeItems.map((hikeItem) => (
+          <ItemCheckPointCard
+            key={hikeItem.id}
+            hikeItem={hikeItem}
+            canEdit={canEdit}
+          />
+        ))}
+      </CardContent>
+    </Card>
+  );
 
   async function handleDelete(checkPoint: CheckPoint) {
     const confirmed = await confirm({
@@ -104,63 +122,60 @@ export function HikeCheckpoints({
         <p className="text-sm font-medium text-destructive">{completeError}</p>
       )}
 
-      {canEdit && (
-        <form action={formAction} className="grid grid-cols-[400px_1fr] gap-6">
-          <Card>
-            <CardHeader className="gap-0">
-              <CardTitle>Ajouter un check-point</CardTitle>
-              <CardDescription>
-                Entrez les détails du check-point ci-dessous.
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent>
-              <FieldGroup>
-                <Field orientation="responsive">
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="checkpoint-label">Label</FieldLabel>
-                      <Input
-                        id="checkpoint-label"
-                        name="label"
-                        placeholder="Pause déjeuner"
-                        required
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="checkpoint-note">Note</FieldLabel>
-                      <Textarea
-                        id="checkpoint-note"
-                        name="note"
-                        className="resize-none max-h-24 h-24"
-                        placeholder="Rien oublié par terre, tout est bon"
-                      />
-                    </Field>
-                  </FieldGroup>
-                </Field>
-                {state && "error" in state && (
-                  <FieldError>{state.error}</FieldError>
-                )}
-                <Button type="submit" disabled={pending}>
-                  {pending ? "Ajout..." : "Ajouter un check-point"}
-                </Button>
-              </FieldGroup>
-            </CardContent>
-          </Card>
-
-          {hikeItems.length > 0 && (
+      {canEdit ? (
+        <div className="grid grid-cols-[400px_1fr] gap-6">
+          <form action={formAction}>
             <Card>
-              <CardHeader>
-                <CardTitle>État du matos</CardTitle>
+              <CardHeader className="gap-0">
+                <CardTitle>Ajouter un check-point</CardTitle>
+                <CardDescription>
+                  Entrez les détails du check-point ci-dessous.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-4 gap-4">
-                {hikeItems.map((hikeItem) => (
-                  <ItemCheckPointCard key={hikeItem.id} hikeItem={hikeItem} />
-                ))}
+
+              <CardContent>
+                <FieldGroup>
+                  <Field orientation="responsive">
+                    <FieldGroup>
+                      <Field>
+                        <FieldLabel htmlFor="checkpoint-label">
+                          Label
+                        </FieldLabel>
+                        <Input
+                          id="checkpoint-label"
+                          name="label"
+                          placeholder="Pause déjeuner"
+                          required
+                        />
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="checkpoint-note">
+                          Note
+                        </FieldLabel>
+                        <Textarea
+                          id="checkpoint-note"
+                          name="note"
+                          className="resize-none max-h-24 h-24"
+                          placeholder="Rien oublié par terre, tout est bon"
+                        />
+                      </Field>
+                    </FieldGroup>
+                  </Field>
+                  {state && "error" in state && (
+                    <FieldError>{state.error}</FieldError>
+                  )}
+                  <Button type="submit" disabled={pending}>
+                    {pending ? "Ajout..." : "Ajouter un check-point"}
+                  </Button>
+                </FieldGroup>
               </CardContent>
             </Card>
-          )}
-        </form>
+          </form>
+
+          {matosCard}
+        </div>
+      ) : (
+        matosCard
       )}
 
       {checkPoints.length === 0 ? (
