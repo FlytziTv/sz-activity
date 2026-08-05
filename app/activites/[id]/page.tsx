@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { HikeItemPicker } from "@/components/hikes/hike-item-picker";
 import { HikeConfirmChecklist } from "@/components/hikes/hike-confirm-checklist";
+import { HikeCheckpoints } from "@/components/hikes/hike-checkpoints";
 import { HikeStepper } from "@/components/hikes/hike-stepper";
 import { Badge } from "@/components/ui/badge";
 import { HIKE_STATUS_LABELS } from "@/lib/labels";
@@ -36,6 +37,7 @@ export default async function HikeDetailPage({
         include: { item: { include: { category: true } } },
         orderBy: { item: { name: "asc" } },
       },
+      checkPoints: { orderBy: { createdAt: "asc" } },
     },
   });
   if (!hike) {
@@ -95,11 +97,19 @@ export default async function HikeDetailPage({
           </p>
         ))}
 
-      {currentStep === "en-rando" && (
-        <p className="text-sm text-muted-foreground">
-          Bientôt disponible : check-points pendant la rando.
-        </p>
-      )}
+      {currentStep === "en-rando" &&
+        (hike.status === "IN_PROGRESS" || hike.status === "COMPLETED" ? (
+          <HikeCheckpoints
+            hikeId={hike.id}
+            hikeStatus={hike.status}
+            checkPoints={hike.checkPoints}
+            hikeItems={hike.items}
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Confirme d&apos;abord ton sac dans l&apos;étape Préparation.
+          </p>
+        ))}
 
       {currentStep === "bilan" && (
         <p className="text-sm text-muted-foreground">
