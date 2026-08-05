@@ -187,8 +187,6 @@ export async function startHike(hikeId: string): Promise<StartHikeState> {
 
 export type CreateCheckPointState = { error: string } | { success: true };
 
-const ITEM_STATUS_AFTER_VALUES = ["OK", "LOST", "DAMAGED", "CONSUMED"] as const;
-
 export async function createCheckPoint(
   hikeId: string,
   _prevState: CreateCheckPointState | null,
@@ -201,7 +199,6 @@ export async function createCheckPoint(
 
   const hike = await prisma.hike.findFirst({
     where: { id: hikeId, userId: session.user.id },
-    include: { items: { select: { id: true, statusAfter: true } } },
   });
   if (!hike) {
     return { error: "Rando introuvable." };
@@ -217,24 +214,9 @@ export async function createCheckPoint(
     return { error: "Le label est obligatoire." };
   }
 
-  const statusUpdates = hike.items.flatMap((hikeItem) => {
-    const raw = formData.get(`status-${hikeItem.id}`);
-    const status = ITEM_STATUS_AFTER_VALUES.find((value) => value === raw);
-    if (!status || status === hikeItem.statusAfter) {
-      return [];
-    }
-    return [{ id: hikeItem.id, status }];
+  await prisma.checkPoint.create({
+    data: { hikeId, label, note: note || null },
   });
-
-  await prisma.$transaction([
-    prisma.checkPoint.create({ data: { hikeId, label, note: note || null } }),
-    ...statusUpdates.map((update) =>
-      prisma.hikeItem.update({
-        where: { id: update.id },
-        data: { statusAfter: update.status },
-      }),
-    ),
-  ]);
 
   revalidatePath(`/activites/${hikeId}`);
   return { success: true };
@@ -285,4 +267,73 @@ export async function completeHike(hikeId: string): Promise<CompleteHikeState> {
   revalidatePath(`/activites/${hikeId}`);
   revalidatePath("/activites");
   return { success: true };
+}
+
+const SPLIT_STATUSES = ["LOST", "DAMAGED", "CONSUMED"] as const;
+type SplitStatus = (typeof SPLIT_STATUSES)[number];
+
+export type CreateStatusSplitState = { error: string } | { success: true };
+
+export async function createStatusSplit(
+  hikeItemId: string,
+  status: SplitStatus,
+  quantity: number,
+): Promise<CreateStatusSplitState> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "Tu dois être connecté." };
+  }
+
+  if (!SPLIT_STATUSES.includes(status)) {
+    return { error: "Statut invalide." };
+  }
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return { error: "Quantité invalide." };
+  }
+
+  const hikeItem = await prisma.hikeItem.findFirst({
+    where: { id: hikeItemId, hike: { userId: session.user.id } },
+    include: { statusSplits: true, hike: { select: { id: true, status: true } } },
+  });
+  if (!hikeItem) {
+    return { error: "Item de rando introuvable." };
+  }
+  if (hikeItem.hike.status !== "IN_PROGRESS") {
+    return { error: "Cette rando n'est pas en cours." };
+  }
+
+  const alreadySplit = hikeItem.statusSplits.reduce(
+    (total, split) => total + split.quantity,
+    0,
+  );
+  const remaining = hikeItem.quantity - alreadySplit;
+  if (quantity > remaining) {
+    return { error: `Il ne reste que ${remaining} exemplaire(s) disponible(s).` };
+  }
+
+  await prisma.hikeItemStatusSplit.create({
+    data: { hikeItemId, status, quantity },
+  });
+
+  revalidatePath(`/activites/${hikeItem.hike.id}`);
+  return { success: true };
+}
+
+export async function deleteStatusSplit(splitId: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    throw new Error("Tu dois être connecté.");
+  }
+
+  const split = await prisma.hikeItemStatusSplit.findFirst({
+    where: { id: splitId, hikeItem: { hike: { userId: session.user.id } } },
+    select: { hikeItem: { select: { hikeId: true } } },
+  });
+  if (!split) {
+    throw new Error("Élément introuvable.");
+  }
+
+  await prisma.hikeItemStatusSplit.delete({ where: { id: splitId } });
+
+  revalidatePath(`/activites/${split.hikeItem.hikeId}`);
 }

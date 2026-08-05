@@ -176,18 +176,29 @@ enum ItemStatusAfterHike {
 }
 
 model HikeItem {
-  id          String               @id @default(cuid())
-  hikeId      String
-  hike        Hike                 @relation(fields: [hikeId], references: [id], onDelete: Cascade)
-  itemId      String
-  item        Item                 @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  quantity    Int                  @default(1)
-  planned     Boolean              @default(true)
-  confirmed   Boolean              @default(false)
-  statusAfter ItemStatusAfterHike?
+  id           String                @id @default(cuid())
+  hikeId       String
+  hike         Hike                  @relation(fields: [hikeId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         Item                  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity     Int                   @default(1)
+  planned      Boolean               @default(true)
+  confirmed    Boolean               @default(false)
+  statusSplits HikeItemStatusSplit[]
 
   @@unique([hikeId, itemId])
   @@map("hike_item")
+}
+
+model HikeItemStatusSplit {
+  id         String              @id @default(cuid())
+  hikeItemId String
+  hikeItem   HikeItem            @relation(fields: [hikeItemId], references: [id], onDelete: Cascade)
+  status     ItemStatusAfterHike
+  quantity   Int
+  createdAt  DateTime            @default(now())
+
+  @@map("hike_item_status_split")
 }
 
 model CheckPoint {
