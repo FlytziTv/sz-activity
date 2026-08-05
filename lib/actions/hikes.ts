@@ -184,3 +184,105 @@ export async function startHike(hikeId: string): Promise<StartHikeState> {
   revalidatePath("/activites");
   return { success: true };
 }
+
+export type CreateCheckPointState = { error: string } | { success: true };
+
+const ITEM_STATUS_AFTER_VALUES = ["OK", "LOST", "DAMAGED", "CONSUMED"] as const;
+
+export async function createCheckPoint(
+  hikeId: string,
+  _prevState: CreateCheckPointState | null,
+  formData: FormData,
+): Promise<CreateCheckPointState> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "Tu dois être connecté." };
+  }
+
+  const hike = await prisma.hike.findFirst({
+    where: { id: hikeId, userId: session.user.id },
+    include: { items: { select: { id: true, statusAfter: true } } },
+  });
+  if (!hike) {
+    return { error: "Rando introuvable." };
+  }
+  if (hike.status !== "IN_PROGRESS") {
+    return { error: "Cette rando n'est pas en cours." };
+  }
+
+  const label = String(formData.get("label") ?? "").trim();
+  const note = String(formData.get("note") ?? "").trim();
+
+  if (!label) {
+    return { error: "Le label est obligatoire." };
+  }
+
+  const statusUpdates = hike.items.flatMap((hikeItem) => {
+    const raw = formData.get(`status-${hikeItem.id}`);
+    const status = ITEM_STATUS_AFTER_VALUES.find((value) => value === raw);
+    if (!status || status === hikeItem.statusAfter) {
+      return [];
+    }
+    return [{ id: hikeItem.id, status }];
+  });
+
+  await prisma.$transaction([
+    prisma.checkPoint.create({ data: { hikeId, label, note: note || null } }),
+    ...statusUpdates.map((update) =>
+      prisma.hikeItem.update({
+        where: { id: update.id },
+        data: { statusAfter: update.status },
+      }),
+    ),
+  ]);
+
+  revalidatePath(`/activites/${hikeId}`);
+  return { success: true };
+}
+
+export async function deleteCheckPoint(checkPointId: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    throw new Error("Tu dois être connecté.");
+  }
+
+  const checkPoint = await prisma.checkPoint.findFirst({
+    where: { id: checkPointId, hike: { userId: session.user.id } },
+    select: { hikeId: true },
+  });
+  if (!checkPoint) {
+    throw new Error("Check-point introuvable.");
+  }
+
+  await prisma.checkPoint.delete({ where: { id: checkPointId } });
+
+  revalidatePath(`/activites/${checkPoint.hikeId}`);
+}
+
+export type CompleteHikeState = { error: string } | { success: true };
+
+export async function completeHike(hikeId: string): Promise<CompleteHikeState> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "Tu dois être connecté." };
+  }
+
+  const hike = await prisma.hike.findFirst({
+    where: { id: hikeId, userId: session.user.id },
+  });
+  if (!hike) {
+    return { error: "Rando introuvable." };
+  }
+  if (hike.status !== "IN_PROGRESS") {
+    return { error: "Cette rando n'est pas en cours." };
+  }
+
+  await prisma.hike.update({
+    where: { id: hikeId },
+    data: { status: "COMPLETED" },
+  });
+
+  revalidatePath(`/activites/${hikeId}`);
+  revalidatePath("/activites");
+  return { success: true };
+}
