@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { HikeItemPicker } from "@/components/hikes/hike-item-picker";
 import { HikeConfirmChecklist } from "@/components/hikes/hike-confirm-checklist";
 import { HikeCheckpoints } from "@/components/hikes/hike-checkpoints";
+import { HikeBilan } from "@/components/hikes/hike-bilan";
 import { HikeStepper } from "@/components/hikes/hike-stepper";
 import { Badge } from "@/components/ui/badge";
 import { HIKE_STATUS_LABELS } from "@/lib/labels";
@@ -114,11 +115,20 @@ export default async function HikeDetailPage({
           </p>
         ))}
 
-      {currentStep === "bilan" && (
-        <p className="text-sm text-muted-foreground">
-          Bientôt disponible : statistiques et statut des items en fin de rando.
-        </p>
-      )}
+      {currentStep === "bilan" &&
+        (hike.status === "COMPLETED" ? (
+          <HikeBilan
+            hikeId={hike.id}
+            hikeItems={hike.items}
+            actualDistance={hike.actualDistance}
+            actualDuration={hike.actualDuration}
+            actualElevation={hike.actualElevation}
+          />
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Termine d&apos;abord ta rando dans l&apos;étape En rando.
+          </p>
+        ))}
     </div>
   );
 }
