@@ -1,4 +1,5 @@
 export const ITEM_HIKE_STATUS_LABELS: Record<string, string> = {
+  OK: "OK",
   DAMAGED: "Abîmé",
   LOST: "Perdu",
   TO_REPLACE: "À racheter",

@@ -79,6 +79,8 @@ async function validateCategory(
     : { ok: false, error: "Catégorie invalide." };
 }
 
+const ITEM_STATUS_VALUES = ["OK", "DAMAGED", "LOST", "TO_REPLACE"] as const;
+
 async function validateBrand(brandId: string, userId: string) {
   if (!brandId) return null;
   const brand = await prisma.brand.findFirst({
@@ -172,6 +174,10 @@ export async function updateItem(
 
   const isHydration = categoryResult.category?.name === HYDRATION_CATEGORY_NAME;
 
+  const rawStatus = String(formData.get("status") ?? "OK");
+  const status =
+    ITEM_STATUS_VALUES.find((value) => value === rawStatus) ?? "OK";
+
   let imageUrl = existingItem.imageUrl;
   let imageKey = existingItem.imageKey;
   const image = formData.get("image");
@@ -199,6 +205,7 @@ export async function updateItem(
       name: fields.name,
       weight: fields.weight,
       quantity: fields.quantity,
+      status,
       categoryId: fields.categoryId || null,
       brandId: fields.brandId || null,
       waterCapacityLiters: isHydration ? fields.waterCapacityLiters : null,
