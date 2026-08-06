@@ -5,6 +5,7 @@ import { DeleteItemButton } from "./deleteItem-button";
 import Image from "next/image";
 import KeyValue from "./KeyValue";
 import { ITEM_HIKE_STATUS_LABELS } from "@/lib/labels";
+import { cn } from "@/lib/utils";
 
 export default function ItemCard({
   item,
@@ -26,8 +27,13 @@ export default function ItemCard({
   categories: { id: string; name: string }[];
   brands: { id: string; name: string }[];
 }) {
+  const isProblem = item.status !== "OK";
+
   return (
-    <Card size="sm">
+    <Card
+      size="sm"
+      className={cn(isProblem && "bg-destructive/10 ring-destructive/40")}
+    >
       <CardContent className="flex flex-row gap-4">
         <div className="relative overflow-hidden rounded-md w-40 h-40 bg-muted">
           {item.imageUrl ? (
