@@ -4,6 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NewItemButton } from "@/components/items/newItem-button";
+import { ChangeItemStatusButton } from "@/components/items/change-item-status-button";
 import ItemCard from "@/components/items/item-card";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -29,27 +30,33 @@ export default async function ItemsPage({
         ? { userId, categoryId: selectedCategory }
         : { userId };
 
-  const [items, categories, brands, counts, totalCount] = await Promise.all([
-    prisma.item.findMany({
-      where: itemWhere,
-      include: { category: true, brand: true },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.category.findMany({
-      where: { OR: [{ userId: null }, { userId }] },
-      orderBy: { name: "asc" },
-    }),
-    prisma.brand.findMany({
-      where: { OR: [{ userId: null }, { userId }] },
-      orderBy: { name: "asc" },
-    }),
-    prisma.item.groupBy({
-      by: ["categoryId"],
-      where: { userId },
-      _count: { _all: true },
-    }),
-    prisma.item.count({ where: { userId } }),
-  ]);
+  const [items, categories, brands, counts, totalCount, allItems] =
+    await Promise.all([
+      prisma.item.findMany({
+        where: itemWhere,
+        include: { category: true, brand: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.category.findMany({
+        where: { OR: [{ userId: null }, { userId }] },
+        orderBy: { name: "asc" },
+      }),
+      prisma.brand.findMany({
+        where: { OR: [{ userId: null }, { userId }] },
+        orderBy: { name: "asc" },
+      }),
+      prisma.item.groupBy({
+        by: ["categoryId"],
+        where: { userId },
+        _count: { _all: true },
+      }),
+      prisma.item.count({ where: { userId } }),
+      prisma.item.findMany({
+        where: { userId },
+        select: { id: true, name: true, quantity: true, status: true },
+        orderBy: { name: "asc" },
+      }),
+    ]);
 
   const countByCategory = new Map(
     counts.map((c) => [c.categoryId, c._count._all]),
@@ -86,6 +93,7 @@ export default async function ItemsPage({
             >
               Gérer catégories & marques
             </Link>
+            <ChangeItemStatusButton items={allItems} />
             <NewItemButton categories={categories} brands={brands} />
           </div>
         </div>
