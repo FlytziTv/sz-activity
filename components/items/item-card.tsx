@@ -4,6 +4,7 @@ import { EditItemButton } from "./editItem-button";
 import { DeleteItemButton } from "./deleteItem-button";
 import Image from "next/image";
 import KeyValue from "./KeyValue";
+import { ITEM_HIKE_STATUS_LABELS } from "@/lib/labels";
 
 export default function ItemCard({
   item,
@@ -58,6 +59,7 @@ export default function ItemCard({
                     name: item.name,
                     weight: item.weight,
                     quantity: item.quantity,
+                    status: item.status,
                     categoryId: item.categoryId,
                     imageUrl: item.imageUrl,
                     brand: item.brand,
@@ -95,7 +97,10 @@ export default function ItemCard({
                 <KeyValue label="Quantité" value={item.quantity} />
               </div>
 
-              <KeyValue label="Statut" value={item.status} />
+              <KeyValue
+                label="Statut"
+                value={ITEM_HIKE_STATUS_LABELS[item.status] ?? item.status}
+              />
             </div>
           </div>
         </div>
