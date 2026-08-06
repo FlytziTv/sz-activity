@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { HYDRATION_CATEGORY_NAME } from "@/lib/item-weight";
+import { ITEM_HIKE_STATUS_LABELS } from "@/lib/labels";
+
+const ITEM_STATUS_VALUES = ["OK", "DAMAGED", "LOST", "TO_REPLACE"] as const;
 
 type Category = { id: string; name: string };
 type Brand = { id: string; name: string };
@@ -29,6 +32,7 @@ type Item = {
   name: string;
   weight: number | null;
   quantity: number;
+  status: string;
   categoryId: string | null;
   imageUrl: string | null;
   brand: Brand | null;
@@ -182,6 +186,26 @@ export function ItemForm({
             </SelectContent>
           </Select>
         </Field>
+
+        {isEdit && (
+          <Field>
+            <FieldLabel htmlFor="item-status">Statut</FieldLabel>
+            <Select name="status" defaultValue={item.status}>
+              <SelectTrigger id="item-status" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {ITEM_STATUS_VALUES.map((value) => (
+                    <SelectItem key={value} value={value}>
+                      {ITEM_HIKE_STATUS_LABELS[value] ?? value}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </Field>
+        )}
 
         {isHydration && (
           <Field>
