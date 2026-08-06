@@ -240,3 +240,66 @@ export async function deleteItem(itemId: string) {
 
   revalidatePath("/items");
 }
+
+const SPLITTABLE_ITEM_STATUSES = ["DAMAGED", "LOST", "TO_REPLACE"] as const;
+type SplittableItemStatus = (typeof SPLITTABLE_ITEM_STATUSES)[number];
+
+export type ChangeItemStatusState = { error: string } | { success: true };
+
+export async function changeItemStatus(
+  itemId: string,
+  status: SplittableItemStatus,
+  quantity: number,
+): Promise<ChangeItemStatusState> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) {
+    return { error: "Tu dois être connecté." };
+  }
+
+  if (!SPLITTABLE_ITEM_STATUSES.includes(status)) {
+    return { error: "Statut invalide." };
+  }
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    return { error: "Quantité invalide." };
+  }
+
+  const item = await prisma.item.findFirst({
+    where: { id: itemId, userId: session.user.id },
+  });
+  if (!item) {
+    return { error: "Item introuvable." };
+  }
+  if (quantity > item.quantity) {
+    return { error: `Il ne reste que ${item.quantity} exemplaire(s).` };
+  }
+
+  if (quantity === item.quantity) {
+    await prisma.item.update({
+      where: { id: item.id },
+      data: { status },
+    });
+  } else {
+    await prisma.$transaction([
+      prisma.item.update({
+        where: { id: item.id },
+        data: { quantity: item.quantity - quantity },
+      }),
+      prisma.item.create({
+        data: {
+          name: item.name,
+          weight: item.weight,
+          quantity,
+          status,
+          waterCapacityLiters: item.waterCapacityLiters,
+          imageUrl: item.imageUrl,
+          userId: item.userId,
+          categoryId: item.categoryId,
+          brandId: item.brandId,
+        },
+      }),
+    ]);
+  }
+
+  revalidatePath("/items");
+  return { success: true };
+}
