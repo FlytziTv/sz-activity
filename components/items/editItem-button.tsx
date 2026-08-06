@@ -12,6 +12,7 @@ type Item = {
   name: string;
   weight: number | null;
   quantity: number;
+  status: string;
   categoryId: string | null;
   imageUrl: string | null;
   brand: Brand | null;
