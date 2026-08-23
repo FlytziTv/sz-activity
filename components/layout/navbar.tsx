@@ -9,7 +9,7 @@ import { Skeleton } from "../ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 
 const navItems = [
-  { name: "Accueil", href: "/" },
+  { name: "Dashboard", href: "/dashboard" },
   { name: "Activités", href: "/activites" },
   { name: "Exploration", href: "/exploration" },
   { name: "Liste", href: "/liste" },
