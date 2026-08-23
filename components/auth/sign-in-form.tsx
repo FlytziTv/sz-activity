@@ -30,6 +30,8 @@ export function SignInForm({ className }: { className?: string }) {
       setMessage(error.message ?? "Une erreur est survenue.");
     } else {
       setMessage("Connecté !");
+      // Rediriger vers la page de dashboard après la connexion
+      window.location.href = "/dashboard";
     }
     setLoading(false);
   }
