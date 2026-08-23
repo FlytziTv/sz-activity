@@ -50,7 +50,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NavBar />
           {children}
           <GlobalDialog />
           <GlobalAlertDialog />
