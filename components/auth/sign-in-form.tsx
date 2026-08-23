@@ -58,7 +58,15 @@ export function SignInForm({ className }: { className?: string }) {
             />
           </Field>
           <Field className="flex flex-col gap-1.5">
-            <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+            <div className="flex items-center justify-between">
+              <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+              <a
+                href="/forgot-password"
+                className="text-sm underline underline-offset-4"
+              >
+                Mot de passe oublié ?
+              </a>
+            </div>
             <Input
               id="password"
               type="password"
