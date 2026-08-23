@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import NavBar from "@/components/layout/navbar";
 import { GlobalDialog } from "@/components/global/global-dialog";
 import { GlobalAlertDialog } from "@/components/global/global-alert-dialog";
 
