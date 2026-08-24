@@ -6,55 +6,19 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.dam.salomon.com",
+        hostname: "res.cloudinary.com",
         port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "contents.mediadecathlon.com",
+        hostname: "images.unsplash.com",
         port: "",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "i.pinimg.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.generationvoyage.fr",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "mapetiterando.fr",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "www.maisondelarando.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "avatar.iran.liara.run",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "utfs.io",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "m.media-amazon.com",
+        hostname: "j23cei1242.ufs.sh",
         port: "",
         pathname: "/**",
       },

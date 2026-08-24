@@ -1,1 +1,0 @@
-ALTER TABLE "user_activities" ADD COLUMN "status" text DEFAULT 'completed' NOT NULL;

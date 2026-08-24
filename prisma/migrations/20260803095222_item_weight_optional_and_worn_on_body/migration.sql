@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "item" ALTER COLUMN "weight" DROP NOT NULL;
+ALTER TABLE "item" ADD COLUMN "wornOnBody" BOOLEAN NOT NULL DEFAULT false;

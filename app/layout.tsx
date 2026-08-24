@@ -1,23 +1,27 @@
+import { ThemeProvider } from "@/components/layout/theme-provider";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Inter } from "next/font/google";
 import "./globals.css";
-import "leaflet/dist/leaflet.css";
-import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
+import { GlobalDialog } from "@/components/global/global-dialog";
+import { GlobalAlertDialog } from "@/components/global/global-alert-dialog";
+
+const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Carnet de Randonnée",
-  description: "Planifie et suis tes randonnées",
-  viewport: "width=device-width, initial-scale=1",
+  title: "SZ Activity",
+  description: "A simple activity tracker for SZ Members",
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
@@ -26,12 +30,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="min-h-screen">{children}</div>
-        <Toaster />
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        "font-sans",
+        inter.variable,
+        geistHeading.variable,
+      )}
+    >
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <GlobalDialog />
+          <GlobalAlertDialog />
+        </ThemeProvider>
       </body>
     </html>
   );

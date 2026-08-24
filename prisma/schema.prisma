@@ -1,0 +1,213 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String     @id
+  name          String
+  email         String
+  emailVerified Boolean    @default(false)
+  image         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  categories    Category[]
+  brands        Brand[]
+  items         Item[]
+  hikes         Hike[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+enum ItemStatus {
+  OK
+  DAMAGED
+  LOST
+  TO_REPLACE
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  icon      String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     Item[]
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
+  @@map("category")
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     Item[]
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
+  @@map("brand")
+}
+
+model Item {
+  id                  String     @id @default(cuid())
+  name                String
+  weight              Int?
+  quantity            Int        @default(1)
+  status              ItemStatus @default(OK)
+  waterCapacityLiters Float?
+  imageUrl            String?
+  imageKey            String?
+  userId              String
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId          String?
+  category            Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brandId             String?
+  brand               Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  hikeItems           HikeItem[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@index([userId])
+  @@map("item")
+}
+
+enum HikeStatus {
+  DRAFT
+  PREPARING
+  IN_PROGRESS
+  COMPLETED
+}
+
+model Hike {
+  id       String     @id @default(cuid())
+  name     String
+  location String?
+  status   HikeStatus @default(DRAFT)
+  userId   String
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date     DateTime?
+
+  plannedWeight    Int?
+  plannedDistance  Float?
+  plannedDuration  Int?
+  plannedElevation Int?
+
+  actualDistance  Float?
+  actualDuration  Int?
+  actualElevation Int?
+
+  items       HikeItem[]
+  checkPoints CheckPoint[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([userId])
+  @@map("hike")
+}
+
+enum ItemStatusAfterHike {
+  OK
+  LOST
+  DAMAGED
+  CONSUMED
+}
+
+model HikeItem {
+  id           String                @id @default(cuid())
+  hikeId       String
+  hike         Hike                  @relation(fields: [hikeId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         Item                  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity     Int                   @default(1)
+  planned      Boolean               @default(true)
+  confirmed    Boolean               @default(false)
+  statusSplits HikeItemStatusSplit[]
+
+  @@unique([hikeId, itemId])
+  @@map("hike_item")
+}
+
+model HikeItemStatusSplit {
+  id         String              @id @default(cuid())
+  hikeItemId String
+  hikeItem   HikeItem            @relation(fields: [hikeItemId], references: [id], onDelete: Cascade)
+  status     ItemStatusAfterHike
+  quantity   Int
+  createdAt  DateTime            @default(now())
+
+  @@map("hike_item_status_split")
+}
+
+model CheckPoint {
+  id        String   @id @default(cuid())
+  hikeId    String
+  hike      Hike     @relation(fields: [hikeId], references: [id], onDelete: Cascade)
+  label     String?
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@map("check_point")
+}
