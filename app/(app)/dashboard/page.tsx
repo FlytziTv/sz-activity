@@ -2,7 +2,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import NavBar from "@/components/layout/navbar";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { StatCard } from "@/components/dashboard/stat-card";
 import RecentHikes from "@/components/dashboard/recenthike";
@@ -69,53 +68,50 @@ export default async function DashboardPage() {
     .reduce((total, group) => total + group._count._all, 0);
 
   return (
-    <>
-      <NavBar />
-      <div className="flex flex-col gap-8 bg-border/20 py-16 px-8 min-h-screen">
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-0">
-            <h2 className="text-xl font-semibold">
-              Salut {session.user.name.split(" ")[0]}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Voici un résumé de ton activité.
-            </p>
-          </div>
-          <SignOutButton />
+    <div className="flex flex-col gap-8 bg-border/20 py-16 px-8 min-h-screen">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-0">
+          <h2 className="text-xl font-semibold">
+            Salut {session.user.name.split(" ")[0]}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Voici un résumé de ton activité.
+          </p>
         </div>
-
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-          <StatCard label="Randos terminées" value={hikeAgg._count} />
-          <StatCard
-            label="Distance parcourue"
-            value={`${hikeAgg._sum.actualDistance ?? 0} km`}
-          />
-          <StatCard
-            label="Dénivelé cumulé"
-            value={`${hikeAgg._sum.actualElevation ?? 0} m D+`}
-          />
-          <StatCard
-            label="Temps sur les sentiers"
-            value={formatDuration(hikeAgg._sum.actualDuration)}
-          />{" "}
-          <StatCard
-            label="Nombre d'équipements"
-            value={`${itemQuantityAgg._sum.quantity ?? 0}`}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <NextHike upcomingHike={upcomingHike} />
-
-          <ItemsStats
-            itemQuantityAgg={itemQuantityAgg}
-            itemsNeedingAttention={itemsNeedingAttention}
-          />
-        </div>
-
-        <RecentHikes recentHikes={recentHikes} />
+        <SignOutButton />
       </div>
-    </>
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+        <StatCard label="Randos terminées" value={hikeAgg._count} />
+        <StatCard
+          label="Distance parcourue"
+          value={`${hikeAgg._sum.actualDistance ?? 0} km`}
+        />
+        <StatCard
+          label="Dénivelé cumulé"
+          value={`${hikeAgg._sum.actualElevation ?? 0} m D+`}
+        />
+        <StatCard
+          label="Temps sur les sentiers"
+          value={formatDuration(hikeAgg._sum.actualDuration)}
+        />
+        <StatCard
+          label="Nombre d'équipements"
+          value={`${itemQuantityAgg._sum.quantity ?? 0}`}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <NextHike upcomingHike={upcomingHike} />
+
+        <ItemsStats
+          itemQuantityAgg={itemQuantityAgg}
+          itemsNeedingAttention={itemsNeedingAttention}
+        />
+      </div>
+
+      <RecentHikes recentHikes={recentHikes} />
+    </div>
   );
 }
