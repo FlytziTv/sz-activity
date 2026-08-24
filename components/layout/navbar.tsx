@@ -11,8 +11,6 @@ import { authClient } from "@/lib/auth-client";
 const navItems = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Activités", href: "/activites" },
-  { name: "Exploration", href: "/exploration" },
-  { name: "Liste", href: "/liste" },
   { name: "Équipement", href: "/items" },
 ];
 
